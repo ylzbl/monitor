@@ -434,7 +434,7 @@ const SYS = {
       {name:'Google News-广电总局',url:'广电总局 国家广播电视总局',type:'gnews',category:'政务'},
       {name:'Google News-影视备案',url:'网络影视剧 备案 审查',type:'gnews',category:'备案'},
       {name:'广电总局-通知公告',url:'http://www.nrta.gov.cn/art/chengwenxingwj/gztg.shtml',type:'page',category:'政务'},
-      {name:'国家电影局',url:'http://www.chinafilm.gov.cn/chinafilm/n frente/contents.shtml',type:'page',category:'电影局'},
+      {name:'国家电影局',url:'http://www.chinafilm.gov.cn/chinafilm/',type:'page',category:'电影局'},
       {name:'重点网络影视剧备案',url:'http://211.146.10.138:8080/YSJBA/',type:'page',category:'备案'},
       {name:'虎嗅',url:'https://rss.huxiu.com/',type:'rss',category:'行业'},
       {name:'澎湃新闻-政务',url:'https://feedx.net/rss/thepaper.xml',type:'rss',category:'综合'},
@@ -548,10 +548,17 @@ function init() {
     if (alertKw === null) ls(sk(id,'akw'), D[id].alertKw);
     if (aiPrompt === null) ls(sk(id,'aiprompt'), D[id].aiPrompt);
   }
-  // Global AI config - no stored keys
-  if (!localStorage.getItem('mon_ai_cfg')) {
-    // Default config with test key - user should replace with own key for production
+  // AI config - ensure test key is available for users
+  const aiExist = localStorage.getItem('mon_ai_cfg');
+  if (!aiExist) {
     ls('mon_ai_cfg', {provider:'zhipu', url:'https://open.bigmodel.cn/api/paas/v4/chat/completions', model:'glm-4-flash', key:'89cf52e166744146a966eb905597a5ba.YvQflJOFgM3yX1o8', summarizePrompt:'', dedupPrompt:''});
+  } else {
+    // If key is empty, offer test key as default
+    const aiParsed = JSON.parse(aiExist);
+    if (!aiParsed.key) {
+      aiParsed.key = '89cf52e166744146a966eb905597a5ba.YvQflJOFgM3yX1o8';
+      ls('mon_ai_cfg', aiParsed);
+    }
   }
   document.documentElement.setAttribute('data-theme', lg('mon_theme', 'light'));
   route();
@@ -721,23 +728,32 @@ function parseRSS2JSON(data, src) {
 }
 
 // === PARSE PAGE ===
+// Common boilerplate patterns to filter out from page parsing
+const PAGE_NOISE = /(?:ICP备|ICP证|公网安备|版权所有|技术支持|浏览器推荐|推荐使用|分辨率|访问量|主办单位|承办单位|联系我们|信访|投诉|举报|网站地图|设为首页|加入收藏|刷新过于频繁|稍后再试|页面不存在|已删除|error|404|403|forbidden)/i;
+
 function parsePage(html, src, snapshot) {
   try {
+    // Quick check for error pages
+    if (html.length < 200 || /<title>\s*(error|404|403|forbidden|not found)/i.test(html)) return [];
     const doc = new DOMParser().parseFromString(html, 'text/html');
     const body = doc.body; if (!body) return [];
-    body.querySelectorAll('script,style,nav,footer,header').forEach(s => s.remove());
+    // Remove noise elements
+    body.querySelectorAll('script,style,nav,footer,header,.footer,.header,.nav,.navbar,.breadcrumb,.copyright,.icp,#footer,#header,#nav').forEach(s => s.remove());
     const text = body.innerText || '';
-    const lines = text.split('\n').map(l=>l.trim()).filter(l=>l.length>10);
+    const lines = text.split('\n').map(l=>l.trim()).filter(l=>l.length>10 && l.length<300 && !PAGE_NOISE.test(l));
+    if (!lines.length) return [];
     if (!snapshot) {
-      // First visit: return all meaningful lines as items
+      // First visit: return meaningful lines as items
       return lines.slice(0, 15).map((line, i) => ({
         id: src.id+'_init_'+Date.now()+'_'+i, title: line.substring(0,120), url: src.url,
         source: src.name, srcId: src.id, ts: Date.now(), type:'page',
         cat: src.category||'默认', read:false, important:false
       }));
     }
-    const oldSet = new Set(snapshot.split('\n').map(l=>l.trim()).filter(l=>l.length>10));
-    return lines.filter(l=>!oldSet.has(l)).slice(0,20).map((line,i) => ({
+    const oldSet = new Set(snapshot.split('\n').map(l=>l.trim()).filter(l=>l.length>10 && !PAGE_NOISE.test(l)));
+    const newLines = lines.filter(l=>!oldSet.has(l));
+    if (!newLines.length) return [];
+    return newLines.slice(0,20).map((line,i) => ({
       id: src.id+'_'+Date.now()+'_'+i, title: line.substring(0,120), url: src.url,
       source: src.name, srcId: src.id, ts: Date.now(), type:'page',
       cat: src.category||'默认', read:false, important:false
