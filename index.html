@@ -353,7 +353,7 @@ td{border-bottom:1px solid var(--border)}tr:hover td{background:var(--accent-lig
    全网内容实时巡检与自动化采集平台
    ============================================================ */
 
-const V = '0.2';
+const V = '0.3';
 
 // === SUBSYSTEM DEFINITIONS ===
 const SYS = {
@@ -429,6 +429,7 @@ const PROXIES = [
   'https://corsproxy.io/?',
   'https://api.allorigins.win/raw?url='
 ];
+const RSS2JSON = 'https://api.rss2json.com/v1/api.json?rss_url=';
 
 // === ZHIPU API ===
 const ZP_KEY = '89cf52e166744146a966eb905597a5ba.YvQflJOFgM3yX1o8';
@@ -576,11 +577,10 @@ async function fetchProxy(url) {
   throw lastErr || new Error('All proxies failed');
 }
 
-// === PARSE RSS ===
+// === PARSE RSS from XML ===
 function parseRSS(xml, src) {
   try {
     const doc = new DOMParser().parseFromString(xml, 'text/xml');
-    // Check for parse errors
     if (doc.querySelector('parsererror')) return [];
     const items = doc.querySelectorAll('item, entry');
     const out = [];
@@ -590,7 +590,6 @@ function parseRSS(xml, src) {
       if (!link) { const le = el.querySelector('link[href]'); if (le) link = le.getAttribute('href'); }
       let pubDate = el.querySelector('pubDate, published, updated')?.textContent?.trim();
       if (!title || !link) return;
-      // Clean title
       let source = src.name;
       if (title.includes(' - ') && title.split(' - ').pop().length < 20) {
         source = title.split(' - ').pop();
@@ -601,6 +600,25 @@ function parseRSS(xml, src) {
       out.push({id: link+'_'+ts, title, url: link, source, srcId: src.id, ts, type: src.type, cat: src.category||'默认', read:false, important:false});
     });
     return out.slice(0, 10);
+  } catch(e) { return []; }
+}
+
+// === PARSE RSS from rss2json API response ===
+function parseRSS2JSON(data, src) {
+  try {
+    if (!data.items || !Array.isArray(data.items)) return [];
+    return data.items.map(item => {
+      let title = item.title || '';
+      let link = item.link || '';
+      let source = src.name;
+      if (title.includes(' - ') && title.split(' - ').pop().length < 20) {
+        source = title.split(' - ').pop();
+        title = title.split(' - ').slice(0, -1).join(' - ');
+      }
+      let ts = item.pubDate ? new Date(item.pubDate).getTime() : Date.now();
+      if (isNaN(ts)) ts = Date.now();
+      return {id: link+'_'+ts, title, url: link, source, srcId: src.id, ts, type: src.type, cat: src.category||'默认', read:false, important:false};
+    }).slice(0, 10);
   } catch(e) { return []; }
 }
 
@@ -640,17 +658,42 @@ async function refreshData() {
     const src = enabled[i];
     ldBar(10 + 80 * (i / total));
     try {
-      const html = await fetchProxy(src.url);
       let items = [];
       if (src.type === 'rss') {
-        items = parseRSS(html, src);
+        // Try rss2json first (more reliable for Chinese feeds)
+        try {
+          const ctrl = new AbortController();
+          const tid = setTimeout(() => ctrl.abort(), 15000);
+          const resp = await fetch(RSS2JSON + encodeURIComponent(src.url), {signal: ctrl.signal});
+          clearTimeout(tid);
+          if (resp.ok) {
+            const data = await resp.json();
+            if (data.status === 'ok' && data.items?.length) {
+              items = parseRSS2JSON(data, src);
+            }
+          }
+        } catch(e) {
+          // rss2json failed, try direct proxy
+        }
+        // If rss2json didn't work, try direct proxy
+        if (!items.length) {
+          try {
+            const xml = await fetchProxy(src.url);
+            items = parseRSS(xml, src);
+          } catch(e) {}
+        }
+        if (items.length) { ok++; } else { fail++; }
       } else {
-        const oldSnap = d.snaps[src.id] || null;
-        items = parsePage(html, src, oldSnap);
-        d.snaps[src.id] = html;
-        ls(sk(curSys,'snap'), d.snaps);
+        // Page type - fetch and diff
+        try {
+          const html = await fetchProxy(src.url);
+          const oldSnap = d.snaps[src.id] || null;
+          items = parsePage(html, src, oldSnap);
+          d.snaps[src.id] = html;
+          ls(sk(curSys,'snap'), d.snaps);
+          ok++;
+        } catch(e) { fail++; }
       }
-      ok++;
       newItems.push(...items);
     } catch(e) {
       console.warn('Fetch fail:', src.name, e.message);
@@ -972,7 +1015,8 @@ function rStg() {
     <p style="margin-top:12px"><strong>Changelog</strong></p>
     <ul>
       <li>v0.1 — 初始版本：5个子系统皮肤、RSS采集、页面轮询、关键字告警、AI摘要、报告生成</li>
-      <li>v0.2 — 修复默认信息源（使用真实可用的RSS地址）、修复toast通知不显示、添加进度条、优化并发抓取为顺序抓取以避免CORS代理过载</li>
+      <li>v0.2 — 修复默认信息源、修复toast通知、添加进度条、顺序抓取</li>
+      <li>v0.3 — 新增rss2json作为RSS解析备选方案（解决中文RSS通过CORS代理无法获取的问题）</li>
     </ul>
   </div>`;
   document.getElementById('sBody').innerHTML = h;
