@@ -353,7 +353,7 @@ td{border-bottom:1px solid var(--border)}tr:hover td{background:var(--accent-lig
    全网内容实时巡检与自动化采集平台
    ============================================================ */
 
-const V = '0.4';
+const V = '0.5';
 
 // === SUBSYSTEM DEFINITIONS ===
 const SYS = {
@@ -486,6 +486,12 @@ function showPortal() {
   document.getElementById('hBrand').textContent = '行业监控系统';
   document.getElementById('hSub').textContent = '娱乐资本论';
   rPortal();
+  // Update the portal counts with latest data
+  for (const id of Object.keys(SYS)) {
+    D[id].items = lg(sk(id,'items'), []);
+    D[id].sources = lg(sk(id,'src'), D[id].sources);
+  }
+  rPortal();
 }
 
 function rPortal() {
@@ -508,6 +514,13 @@ function rPortal() {
 function enterSys(id) {
   curSys = id;
   const sys = SYS[id], d = D[id];
+  // Reload from storage in case another tab updated it
+  d.items = lg(sk(id,'items'), d.items);
+  d.sources = lg(sk(id,'src'), d.sources);
+  d.keywords = lg(sk(id,'kw'), d.keywords);
+  d.alertKw = lg(sk(id,'akw'), d.alertKw);
+  d.cfg = Object.assign({interval:30,auto:true,notif:true,maxItems:500,blacklist:'',whitelist:'',notifFreq:'realtime',model:'glm-4-flash',reportTime:'18:00'}, lg(sk(id,'cfg'), {}));
+
   document.documentElement.setAttribute('data-sys', id);
   document.getElementById('pgPortal').classList.remove('on');
   document.getElementById('pgSys').classList.add('on');
@@ -1026,6 +1039,7 @@ function rStg() {
       <li>v0.2 — 修复默认信息源、修复toast通知、添加进度条、顺序抓取</li>
       <li>v0.3 — 新增rss2json作为RSS解析备选方案</li>
       <li>v0.4 — 修复去重逻辑、改进关键字匹配稳定性</li>
+      <li>v0.5 — 修复portal返回时数据不刷新、子系统进入时重新加载localStorage数据</li>
     </ul>
   </div>`;
   document.getElementById('sBody').innerHTML = h;
