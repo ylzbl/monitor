@@ -353,7 +353,7 @@ td{border-bottom:1px solid var(--border)}tr:hover td{background:var(--accent-lig
    全网内容实时巡检与自动化采集平台
    ============================================================ */
 
-const V = '0.3';
+const V = '0.4';
 
 // === SUBSYSTEM DEFINITIONS ===
 const SYS = {
@@ -703,9 +703,17 @@ async function refreshData() {
 
   ldBar(95);
 
-  // Dedup
-  const existIds = new Set(d.items.map(i => i.url + i.title));
-  const unique = newItems.filter(i => !existIds.has(i.url + i.title));
+  // Dedup - remove duplicates within newItems first
+  const seen = new Set();
+  const deduped = newItems.filter(i => {
+    const key = i.url + '|' + i.title;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+  // Then remove items already in existing data
+  const existIds = new Set(d.items.map(i => i.url + '|' + i.title));
+  const unique = deduped.filter(i => !existIds.has(i.url + '|' + i.title));
 
   // Keyword match
   const allKw = [...d.keywords, ...d.alertKw];
@@ -1016,7 +1024,8 @@ function rStg() {
     <ul>
       <li>v0.1 — 初始版本：5个子系统皮肤、RSS采集、页面轮询、关键字告警、AI摘要、报告生成</li>
       <li>v0.2 — 修复默认信息源、修复toast通知、添加进度条、顺序抓取</li>
-      <li>v0.3 — 新增rss2json作为RSS解析备选方案（解决中文RSS通过CORS代理无法获取的问题）</li>
+      <li>v0.3 — 新增rss2json作为RSS解析备选方案</li>
+      <li>v0.4 — 修复去重逻辑、改进关键字匹配稳定性</li>
     </ul>
   </div>`;
   document.getElementById('sBody').innerHTML = h;
