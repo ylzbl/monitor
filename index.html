@@ -4,1513 +4,184 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>行业监控系统 | 娱乐资本论</title>
-<style>
-/* === RESET === */
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
-img,svg{max-width:100%;height:auto;display:block}
-ul,ol{list-style:none}
-button,input,select,textarea{font-family:inherit}
-
-/* === TOKENS === */
-:root{
-  --accent:#347df8;--accent-hover:#2768d9;--accent-light:rgba(52,125,248,.10);
-  --bg:#F7FAFC;--bg-card:#FFF;--bg-secondary:#EDF2F7;--bg-hover:#E2E8F0;
-  --text:#1A202C;--text-secondary:#718096;--text-muted:#A0AEC0;
-  --border:#E2E8F0;--border-medium:#CBD5E0;
-  --shadow-sm:0 1px 2px rgba(0,0,0,.05);--shadow-md:0 4px 12px rgba(0,0,0,.08);--shadow-lg:0 8px 24px rgba(0,0,0,.12);
-  --radius:12px;--radius-sm:8px;--radius-xs:4px;
-  --space-xs:4px;--space-sm:8px;--space-md:16px;--space-lg:24px;--space-xl:32px;
-  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans SC","Source Han Sans",sans-serif;
-  --font-mono:SFMono-Regular,Consolas,Menlo,monospace;
-  --font-xs:12px;--font-sm:14px;--font-base:16px;--font-lg:20px;--font-xl:24px;--font-2xl:32px;
-  --fast:.15s ease;--normal:.25s ease;
-  --max-w:1200px;--hdr-h:56px;
-  --ok:#48BB78;--warn:#ECC94B;--err:#F56565;--info:#4299E1;
-}
-[data-theme="dark"]{
-  --bg:#0D1117;--bg-card:#161b22;--bg-secondary:#21262d;--bg-hover:#30363d;
-  --text:#e6edf3;--text-secondary:#8b949e;--text-muted:#6e7681;
-  --border:#30363d;--border-medium:#444c56;
-  --accent-light:rgba(52,125,248,.15);
-  --shadow-sm:0 1px 2px rgba(0,0,0,.3);--shadow-md:0 4px 12px rgba(0,0,0,.4);--shadow-lg:0 8px 24px rgba(0,0,0,.5);
-}
-
-/* === SUBSYSTEM ACCENTS === */
-[data-sys="chaowan"]{--accent:#E91E8C;--accent-hover:#C41878;--accent-light:rgba(233,30,140,.10)}
-[data-theme="dark"][data-sys="chaowan"]{--accent-light:rgba(233,30,140,.15)}
-[data-sys="guangdian"]{--accent:#1565C0;--accent-hover:#0D47A1;--accent-light:rgba(21,101,192,.10)}
-[data-theme="dark"][data-sys="guangdian"]{--accent-light:rgba(21,101,192,.15)}
-[data-sys="piaofang"]{--accent:#D97706;--accent-hover:#B45309;--accent-light:rgba(217,119,6,.10)}
-[data-theme="dark"][data-sys="piaofang"]{--accent-light:rgba(217,119,6,.15)}
-[data-sys="duanju"]{--accent:#7C3AED;--accent-hover:#6D28D9;--accent-light:rgba(124,58,237,.10)}
-[data-theme="dark"][data-sys="duanju"]{--accent-light:rgba(124,58,237,.15)}
-[data-sys="shangshi"]{--accent:#0D9488;--accent-hover:#0F766E;--accent-light:rgba(13,148,136,.10)}
-[data-theme="dark"][data-sys="shangshi"]{--accent-light:rgba(13,148,136,.15)}
-
-/* === BASE === */
-body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;font-size:var(--font-base);min-height:100vh}
-a{color:var(--accent);text-decoration:none;transition:color var(--fast)}
-a:hover{color:var(--accent-hover)}
-button{cursor:pointer}
-
-/* === HEADER === */
-.hdr{position:sticky;top:0;z-index:100;background:var(--bg-card);border-bottom:1px solid var(--border);height:var(--hdr-h);display:flex;align-items:center;justify-content:space-between;padding:0 var(--space-lg);backdrop-filter:blur(12px)}
-.hdr-left{display:flex;align-items:center;gap:12px}
-.hdr-brand{font-size:18px;font-weight:900;cursor:pointer}
-.hdr-sub{font-size:var(--font-xs);color:var(--text-muted)}
-.hdr-right{display:flex;align-items:center;gap:8px}
-
-/* === BUTTONS === */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 20px;font-size:var(--font-sm);font-weight:600;border-radius:var(--radius-sm);border:1px solid transparent;transition:all var(--fast);line-height:1.5;white-space:nowrap;user-select:none}
-.btn:active{transform:scale(.97)}.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
-.btn-p{background:var(--accent);color:#fff;border-color:var(--accent)}.btn-p:hover:not(:disabled){background:var(--accent-hover)}
-.btn-s{background:var(--bg-secondary);color:var(--text);border-color:var(--border)}.btn-s:hover:not(:disabled){background:var(--bg-hover)}
-.btn-o{background:transparent;color:var(--accent);border-color:var(--accent)}.btn-o:hover:not(:disabled){background:var(--accent-light)}
-.btn-g{background:transparent;color:var(--text-secondary);border:none}.btn-g:hover:not(:disabled){background:var(--bg-secondary);color:var(--text)}
-.btn-d{background:var(--err);color:#fff;border-color:var(--err)}
-.btn-sm{padding:4px 12px;font-size:var(--font-xs);border-radius:var(--radius-xs)}
-.ibtn{width:36px;height:36px;border:1px solid var(--border);border-radius:var(--radius-sm);background:transparent;color:var(--text);display:flex;align-items:center;justify-content:center;transition:all var(--fast)}
-.ibtn:hover{border-color:var(--accent);color:var(--accent)}
-.ibtn svg{width:18px;height:18px}
-
-/* === INPUTS === */
-.inp{padding:8px 12px;font-size:var(--font-sm);border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg-card);color:var(--text);outline:none;transition:border-color var(--fast);line-height:1.5;width:100%}
-.inp::placeholder{color:var(--text-muted)}.inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light)}
-textarea.inp{resize:vertical}
-
-/* === TOGGLE === */
-.tog{display:inline-flex;align-items:center;gap:10px;cursor:pointer;font-size:var(--font-sm);user-select:none}
-.tog-t{position:relative;width:44px;height:24px;flex-shrink:0;background:var(--border-medium);border-radius:12px;transition:background var(--fast)}
-.tog input{position:absolute;opacity:0;width:0;height:0}
-.tog-k{position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:var(--shadow-sm);transition:transform var(--fast)}
-.tog input:checked+.tog-t{background:var(--accent)}.tog input:checked+.tog-t .tog-k{transform:translateX(20px)}
-
-/* === TABS === */
-.tabs{display:flex;gap:0;border-bottom:1px solid var(--border);overflow-x:auto}
-.tab{padding:10px 20px;font-size:var(--font-sm);font-weight:600;color:var(--text-secondary);cursor:pointer;border:none;border-bottom:2px solid transparent;background:none;transition:all var(--fast);white-space:nowrap}
-.tab:hover{color:var(--accent)}.tab.on{color:var(--accent);border-bottom-color:var(--accent)}
-
-/* === CARDS === */
-.card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:var(--space-lg);transition:border-color var(--fast)}
-.card:hover{border-color:var(--accent)}
-.card-t{font-size:var(--font-base);font-weight:900;margin-bottom:var(--space-sm)}
-
-/* === TABLE === */
-.tbl-w{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:var(--font-sm)}
-th,td{padding:10px 14px;text-align:left}
-th{background:var(--bg-secondary);font-weight:700;color:var(--text-secondary);font-size:var(--font-xs);border-bottom:2px solid var(--border)}
-td{border-bottom:1px solid var(--border)}tr:hover td{background:var(--accent-light)}
-
-/* === BADGE === */
-.bdg{display:inline-flex;align-items:center;padding:2px 8px;font-size:var(--font-xs);font-weight:700;border-radius:var(--radius-xs);line-height:1.5}
-.bdg-a{background:var(--accent);color:#fff}
-.bdg-l{background:var(--accent-light);color:var(--accent)}
-.bdg-m{background:var(--bg-secondary);color:var(--text-muted)}
-
-/* === SPINNER === */
-.spin{display:inline-block;width:24px;height:24px;border:2.5px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:sp .75s linear infinite}
-@keyframes sp{to{transform:rotate(360deg)}}
-
-/* === LAYOUT === */
-.ctn{max-width:var(--max-w);margin:0 auto;padding:var(--space-lg)}
-.pg{display:none}.pg.on{display:block}
-
-/* === PORTAL === */
-.ptl-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:var(--space-lg)}
-.ptl-c{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:var(--space-xl);cursor:pointer;transition:all var(--normal);position:relative;overflow:hidden}
-.ptl-c:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow-md)}
-.ptl-c::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--accent);opacity:0;transition:opacity var(--fast)}
-.ptl-c:hover::before{opacity:1}
-.ptl-i{width:48px;height:48px;border-radius:var(--radius-sm);background:var(--accent-light);color:var(--accent);display:flex;align-items:center;justify-content:center;margin-bottom:var(--space-md);font-size:24px}
-.ptl-t{font-size:var(--font-lg);font-weight:900;margin-bottom:var(--space-xs)}
-.ptl-d{font-size:var(--font-sm);color:var(--text-secondary);line-height:1.7}
-
-/* === DASHBOARD === */
-.ds-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:var(--space-md);margin-bottom:var(--space-lg)}
-.ds-c{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:var(--space-md)}
-.ds-l{font-size:var(--font-xs);color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:.3px}
-.ds-v{font-size:var(--font-2xl);font-weight:900;color:var(--accent);margin:4px 0}
-.ds-s{font-size:var(--font-xs);color:var(--text-secondary)}
-
-/* === DASHBOARD CHARTS === */
-.ds-charts{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-lg);margin-bottom:var(--space-lg)}
-.ds-chart-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:var(--space-md)}
-.ds-chart-title{font-size:var(--font-sm);font-weight:700;color:var(--text-secondary);margin-bottom:var(--space-sm)}
-.ds-chart-wrap{position:relative;width:100%;min-height:200px}
-.ds-chart-wrap svg{width:100%;height:100%}
-.ds-map{grid-column:1/-1}
-.ds-map svg{max-height:260px;margin:0 auto}
-
-/* === TIMELINE === */
-.tl{position:relative;padding-left:24px}
-.tl::before{content:'';position:absolute;left:7px;top:0;bottom:0;width:2px;background:var(--border)}
-.tl-i{position:relative;padding-bottom:var(--space-lg);animation:fi .3s ease}
-.tl-i::before{content:'';position:absolute;left:-20px;top:6px;width:10px;height:10px;border-radius:50%;background:var(--accent);border:2px solid var(--bg);z-index:1}
-.tl-i.imp::before{background:var(--err);box-shadow:0 0 6px rgba(245,101,101,.6)}
-.tl-tm{font-family:var(--font-mono);font-size:var(--font-xs);color:var(--text-muted)}
-.tl-src{display:inline-block;font-size:var(--font-xs);font-weight:700;color:var(--accent);background:var(--accent-light);padding:1px 6px;border-radius:var(--radius-xs);margin:0 6px}
-.tl-tt{font-size:var(--font-base);font-weight:500;margin:4px 0}.tl-tt a{color:inherit}.tl-tt a:hover{color:var(--accent)}
-.tl-url{font-size:var(--font-xs);color:var(--text-muted);font-family:var(--font-mono);word-break:break-all;margin-top:2px}
-.tl-sum{font-size:var(--font-sm);color:var(--text-secondary);margin-top:4px}
-.tl-act{display:flex;gap:var(--space-sm);margin-top:var(--space-xs)}
-.tl-tag{font-size:var(--font-xs);color:var(--text-muted);background:var(--bg-secondary);padding:2px 6px;border-radius:var(--radius-xs)}
-@keyframes fi{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
-
-/* === MODAL === */
-.mdl-o{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center}
-.mdl-o.on{display:flex}
-.mdl{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);width:100%;max-width:700px;max-height:85vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow-lg)}
-.mdl-h{padding:var(--space-md) var(--space-lg);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.mdl-t{font-size:var(--font-lg);font-weight:900}
-.mdl-x{width:32px;height:32px;border:none;border-radius:var(--radius-xs);background:transparent;color:var(--text-secondary);display:flex;align-items:center;justify-content:center;font-size:18px}
-.mdl-x:hover{background:var(--bg-secondary);color:var(--text)}
-.mdl-b{padding:var(--space-lg);overflow-y:auto;flex:1}
-
-/* === FORM === */
-.fg{margin-bottom:var(--space-md)}
-.fl{display:block;font-size:var(--font-sm);font-weight:600;margin-bottom:var(--space-xs)}
-.fh{font-size:var(--font-xs);color:var(--text-muted);margin-top:2px}
-.fr{display:flex;gap:var(--space-sm);align-items:flex-end}
-
-/* === SOURCE ITEM === */
-.si{display:flex;align-items:center;gap:var(--space-sm);padding:var(--space-sm) var(--space-md);border-bottom:1px solid var(--border);transition:background var(--fast)}
-.si:hover{background:var(--accent-light)}.si:last-child{border-bottom:none}
-.si-n{flex:1;font-size:var(--font-sm);font-weight:500;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.si-u{font-size:var(--font-xs);color:var(--text-muted);font-family:var(--font-mono);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:280px}
-.si-t{font-size:var(--font-xs);font-weight:700;color:var(--accent);background:var(--accent-light);padding:1px 6px;border-radius:var(--radius-xs);flex-shrink:0}
-
-/* === REPORT PREVIEW === */
-.rp{background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius-sm);padding:var(--space-lg);font-size:var(--font-sm);line-height:1.8;white-space:pre-wrap;max-height:500px;overflow-y:auto}
-
-/* === ABOUT === */
-.abt{margin-bottom:var(--space-lg)}.abt h3{font-size:var(--font-base);font-weight:900;color:var(--accent);margin-bottom:var(--space-sm)}
-.abt p,.abt li{font-size:var(--font-sm);color:var(--text-secondary);line-height:1.7}.abt ul{padding-left:20px;list-style:disc}
-
-/* === EMPTY === */
-.emp{text-align:center;padding:var(--space-xl);color:var(--text-muted)}
-.emp-i{font-size:48px;margin-bottom:var(--space-md)}.emp-t{font-size:var(--font-base);margin-bottom:var(--space-md)}
-
-/* === TOAST === */
-.tc{position:fixed;top:calc(var(--hdr-h) + 8px);right:16px;z-index:300;display:flex;flex-direction:column;gap:8px;pointer-events:none}
-.tst{background:var(--bg-card);border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:var(--radius-sm);padding:var(--space-sm) var(--space-md);box-shadow:var(--shadow-md);animation:si2 .3s ease;font-size:var(--font-sm);max-width:360px;pointer-events:auto}
-.tst.err{border-left-color:var(--err)}.tst.ok{border-left-color:var(--ok)}
-@keyframes si2{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
-
-/* === KEYWORD HIGHLIGHT === */
-.kw-h{background:var(--accent-light);color:var(--accent);padding:0 2px;border-radius:2px;font-weight:600}
-
-/* === SCROLLBAR === */
-::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:var(--text-muted)}
-
-/* === LOADING BAR === */
-.ld-bar{position:fixed;top:var(--hdr-h);left:0;height:3px;background:var(--accent);z-index:150;transition:width .3s ease;opacity:0}
-.ld-bar.on{opacity:1}
-
-/* === PRINT === */
-@media print{
-  .hdr,.ld-bar,.tc,.tabs,.tl-act,.btn,button,.mdl-o{display:none!important}
-  body{background:#fff!important;color:#000!important;font-size:12px!important}
-  .pg{display:block!important}.tp{display:block!important}
-  .card{border:1px solid #ccc!important;break-inside:avoid}
-  a{color:#000!important;text-decoration:underline!important}
-  .tl-url{display:block!important}
-  .ds-c{border:1px solid #ccc!important}
-  .ptl-c{border:1px solid #ccc!important;break-inside:avoid}
-  [data-theme="dark"]{--bg:#fff;--bg-card:#fff;--text:#000;--border:#ccc}
-}
-
-/* === RESPONSIVE === */
-@media(max-width:768px){
-  .ctn{padding:var(--space-sm)}
-  .ptl-g{grid-template-columns:1fr}
-  .ds-g{grid-template-columns:repeat(2,1fr)}
-  .ds-charts{grid-template-columns:1fr}
-  .fr{flex-direction:column}
-  .si-u{max-width:120px}
-  .hdr{padding:0 var(--space-sm)}
-  .tab{padding:8px 12px;font-size:var(--font-xs)}
-}
-</style>
+<link rel="stylesheet" href="common.css">
 </head>
 <body>
-
-<!-- HEADER -->
-<header class="hdr" id="hdr">
+<header class="hdr">
   <div class="hdr-left">
-    <span class="hdr-brand" id="hBrand" onclick="goPortal()">行业监控系统</span>
-    <span class="hdr-sub" id="hSub"></span>
+    <span class="hdr-brand">行业监控系统</span>
+    <span class="hdr-sub">娱乐资本论</span>
   </div>
   <div class="hdr-right">
-    <button class="ibtn" onclick="toggleTheme()" title="切换主题" id="themeBtn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg>
-    </button>
-    <button class="ibtn" onclick="refreshData()" title="刷新数据" id="rfBtn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-    </button>
-    <button class="ibtn" onclick="window.print()" title="打印">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-    </button>
-    <button class="ibtn" onclick="openSettings()" title="设置">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-    </button>
+    <button class="ibtn" onclick="toggleTheme()" title="切换主题"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg></button>
+    <button class="ibtn" onclick="refreshAll()" title="刷新全部" id="rfBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
+    <button class="ibtn" onclick="openGlobalSettings()" title="设置"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
   </div>
 </header>
-
-<!-- LOADING BAR -->
 <div class="ld-bar" id="ldBar"></div>
-
-<!-- TOAST CONTAINER -->
 <div class="tc" id="tc"></div>
 
-<!-- ===== PORTAL ===== -->
-<div class="pg on" id="pgPortal">
-  <div class="ctn">
-    <div style="text-align:center;padding:var(--space-xl) 0">
-      <h1 style="font-size:var(--font-2xl);font-weight:900;margin-bottom:var(--space-sm)">行业监控系统</h1>
-      <p style="color:var(--text-secondary);margin-bottom:var(--space-xl)">娱乐资本论 · 全网内容实时巡检与自动化采集平台</p>
-    </div>
-    <div class="ptl-g" id="ptlGrid"></div>
+<div class="ctn">
+  <div style="text-align:center;padding:var(--space-xl) 0">
+    <h1 style="font-size:var(--font-2xl);font-weight:900;margin-bottom:var(--space-sm)">行业监控系统</h1>
+    <p style="color:var(--text-secondary);margin-bottom:var(--space-xl)">娱乐资本论 · 全网内容实时巡检与自动化采集平台</p>
   </div>
+  <div class="ptl-g" id="ptlGrid"></div>
 </div>
 
-<!-- ===== SYSTEM PAGE ===== -->
-<div class="pg" id="pgSys">
-  <div class="ctn">
-    <div class="tabs" id="sysTabs" style="margin-bottom:var(--space-lg)">
-      <button class="tab on" data-tab="dashboard" onclick="swTab(this)">仪表盘</button>
-      <button class="tab" data-tab="sources" onclick="swTab(this)">信息源</button>
-      <button class="tab" data-tab="timeline" onclick="swTab(this)">监控时间线</button>
-      <button class="tab" data-tab="keywords" onclick="swTab(this)">关键字</button>
-      <button class="tab" data-tab="reports" onclick="swTab(this)">报告</button>
-    </div>
-
-    <!-- Dashboard -->
-    <div class="tp on" id="pDash">
-      <div class="ds-g" id="dsStats"></div>
-      <div class="ds-charts" id="dsCharts">
-        <div class="ds-chart-card ds-map" id="dsMapCard">
-          <div class="ds-chart-title">信息源地理分布</div>
-          <div class="ds-chart-wrap" id="dsMap"></div>
-        </div>
-        <div class="ds-chart-card" id="dsPieCard">
-          <div class="ds-chart-title">分类分布</div>
-          <div class="ds-chart-wrap" id="dsPie"></div>
-        </div>
-        <div class="ds-chart-card" id="dsBarCard">
-          <div class="ds-chart-title">信息源采集量</div>
-          <div class="ds-chart-wrap" id="dsBar"></div>
-        </div>
-        <div class="ds-chart-card" id="dsLineCard">
-          <div class="ds-chart-title">近期趋势</div>
-          <div class="ds-chart-wrap" id="dsLine"></div>
-        </div>
-      </div>
-      <div class="card" style="margin-bottom:var(--space-lg)">
-        <div class="card-t">最近监控动态</div>
-        <div id="dsRecent"></div>
-      </div>
-    </div>
-
-    <!-- Sources -->
-    <div class="tp" id="pSrc" style="display:none">
-      <div class="card" style="margin-bottom:var(--space-lg)">
-        <div class="card-t">添加信息源</div>
-        <div class="fr">
-          <div class="fg" style="flex:1"><label class="fl">名称</label><input class="inp" id="sN" placeholder="如：澎湃新闻"></div>
-          <div class="fg" style="flex:2"><label class="fl">URL</label><input class="inp" id="sU" placeholder="RSS地址或网页URL"></div>
-          <div class="fg" style="width:120px"><label class="fl">类型</label><select class="inp" id="sT"><option value="rss">RSS</option><option value="page">页面轮询</option><option value="gnews">Google News</option></select></div>
-          <div class="fg" style="width:120px"><label class="fl">分类</label><input class="inp" id="sC" placeholder="默认"></div>
-          <button class="btn btn-p" onclick="addSrc()" style="margin-bottom:0;align-self:flex-end;height:38px">添加</button>
-        </div>
-        <div class="fh" style="margin-top:var(--space-xs)">提示：Google News 类型只需填入关键字，系统自动生成 RSS 地址；页面轮询类型会检测网页内容变化</div>
-      </div>
-      <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-sm)">
-          <div class="card-t" style="margin:0">已配置信息源</div>
-          <div style="display:flex;gap:var(--space-sm)"><button class="btn btn-sm btn-o" onclick="impSrc()">导入</button><button class="btn btn-sm btn-o" onclick="expSrc()">导出</button></div>
-        </div>
-        <div id="srcList"></div>
-      </div>
-    </div>
-
-    <!-- Timeline -->
-    <div class="tp" id="pTl" style="display:none">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-md)">
-        <div style="display:flex;gap:var(--space-sm);align-items:center">
-          <input class="inp" id="tlS" placeholder="搜索标题..." style="width:250px" oninput="rTl()">
-          <select class="inp" id="tlF" style="width:120px" onchange="rTl()"><option value="">全部</option></select>
-        </div>
-        <button class="btn btn-sm btn-p" onclick="refreshData()">立即刷新</button>
-      </div>
-      <div class="tl" id="tlList"></div>
-    </div>
-
-    <!-- Keywords -->
-    <div class="tp" id="pKw" style="display:none">
-      <div class="card" style="margin-bottom:var(--space-lg)">
-        <div class="card-t">关键字管理</div>
-        <p class="fh" style="margin-bottom:var(--space-md)">关键字用于过滤、高亮和告警。每行一个关键字，支持中英文。</p>
-        <div class="fr"><input class="inp" id="kwI" placeholder="输入关键字后回车添加" style="flex:1" onkeydown="if(event.key==='Enter')addKw()"><button class="btn btn-p" onclick="addKw()">添加</button></div>
-        <div id="kwL" style="margin-top:var(--space-md);display:flex;flex-wrap:wrap;gap:var(--space-sm)"></div>
-      </div>
-      <div class="card">
-        <div class="card-t">告警关键字</div>
-        <p class="fh" style="margin-bottom:var(--space-md)">匹配到这些关键字时触发浏览器通知。</p>
-        <div class="fr"><input class="inp" id="akI" placeholder="输入告警关键字后回车" style="flex:1" onkeydown="if(event.key==='Enter')addAKw()"><button class="btn btn-d btn-sm" onclick="addAKw()">添加告警词</button></div>
-        <div id="akL" style="margin-top:var(--space-md);display:flex;flex-wrap:wrap;gap:var(--space-sm)"></div>
-      </div>
-    </div>
-
-    <!-- Reports -->
-    <div class="tp" id="pRp" style="display:none">
-      <div class="card" style="margin-bottom:var(--space-lg)">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-md)">
-          <div class="card-t" style="margin:0">生成报告</div>
-          <div style="display:flex;gap:var(--space-sm)"><button class="btn btn-p" onclick="genRpt('daily')">生成日报</button><button class="btn btn-o" onclick="genRpt('weekly')">生成周报</button></div>
-        </div>
-        <div class="fr" style="margin-bottom:var(--space-md)">
-          <div class="fg" style="flex:1"><label class="fl">报告日期</label><input class="inp" type="date" id="rpD"></div>
-          <div class="fg" style="flex:1"><label class="fl">使用AI总结</label><label class="tog"><input type="checkbox" id="rpAI" checked><span class="tog-t"><span class="tog-k"></span></span><span>AI摘要</span></label></div>
-        </div>
-        <div class="fg">
-          <label class="fl">AI摘要提示词（可自定义）</label>
-          <textarea class="inp" id="rpPrompt" rows="3" placeholder="自定义AI摘要提示词，留空使用默认"></textarea>
-          <div class="fh">留空使用默认提示词。支持 {type} 替换为 日报/周报，{sys} 替换为子系统名称</div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-t">报告预览</div>
-        <div class="rp" id="rpV">尚未生成报告。点击上方按钮生成。</div>
-        <div style="margin-top:var(--space-md);display:flex;gap:var(--space-sm)">
-          <button class="btn btn-sm btn-o" onclick="cpRpt()">复制文本</button>
-          <button class="btn btn-sm btn-o" onclick="dlRpt()">下载TXT</button>
-          <button class="btn btn-sm btn-o" onclick="window.print()">打印报告</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ===== SETTINGS MODAL ===== -->
 <div class="mdl-o" id="sModal">
   <div class="mdl">
-    <div class="mdl-h"><span class="mdl-t">系统设置</span><button class="mdl-x" onclick="closeStg()">&times;</button></div>
+    <div class="mdl-h"><span class="mdl-t">系统设置</span><button class="mdl-x" onclick="document.getElementById('sModal').classList.remove('on')">&times;</button></div>
     <div class="mdl-b" id="sBody"></div>
   </div>
 </div>
 
+<script src="common.js"></script>
 <script>
-/* ============================================================
-   行业监控系统 v0.7  —  娱乐资本论
-   全网内容实时巡检与自动化采集平台
-   ============================================================ */
+/* === PORTAL PAGE LOGIC === */
+let sysData = {};
+let autoRefreshDone = false;
 
-const V = '0.7';
-
-// === SUBSYSTEM DEFINITIONS ===
-const SYS = {
-  chaowan: {
-    id:'chaowan', name:'潮玩行业每日监控', icon:'🎮',
-    desc:'实时掌握潮玩行业舆情动态、产品热度、价格波动、竞品动作、渠道变化、热点事件',
-    accent:'#E91E8C',
-    defaultSources:[
-      {name:'Google News-潮玩',url:'潮玩 盲盒 POP MART',type:'gnews',category:'行业'},
-      {name:'Google News-泡泡玛特',url:'泡泡玛特 Pop Mart',type:'gnews',category:'品牌'},
-      {name:'虎嗅-消费',url:'https://rss.huxiu.com/',type:'rss',category:'行业'},
-      {name:'36氪-快讯',url:'https://36kr.com/newsflashes',type:'page',category:'快讯'},
-      {name:'IT之家-数码',url:'https://www.ithome.com/rss/',type:'rss',category:'科技'},
-      {name:'澎湃新闻',url:'https://feedx.net/rss/thepaper.xml',type:'rss',category:'综合'},
-    ],
-    defaultKeywords:['泡泡玛特','盲盒','潮玩','TOP TOY','52TOYS','寻找独角兽','Skullpanda','Molly','Dimoo','新品','联名','限量','涨价','名创优品','IP授权','手办','二次元'],
-    defaultAlertKeywords:['泡泡玛特','违规','召回','下架','监管','侵权','假货'],
-    defaultAIPrompt:'你是{sys}的数据分析师。请根据以下监控数据，生成{type}摘要：1.重大事件和趋势；2.风险点；3.潮玩行业动态总结。简明扼要，中文。'
-  },
-  guangdian: {
-    id:'guangdian', name:'广电总局数据监控', icon:'📡',
-    desc:'覆盖项目发行、节目备案、传播数据、播出资质、违规风险等关键维度',
-    accent:'#1565C0',
-    defaultSources:[
-      {name:'Google News-广电总局',url:'广电总局 国家广播电视总局',type:'gnews',category:'政务'},
-      {name:'Google News-影视备案',url:'网络影视剧 备案 审查',type:'gnews',category:'备案'},
-      {name:'广电总局-通知公告',url:'http://www.nrta.gov.cn/art/chengwenxingwj/gztg.shtml',type:'page',category:'政务'},
-      {name:'国家电影局',url:'http://www.chinafilm.gov.cn/chinafilm/',type:'page',category:'电影局'},
-      {name:'重点网络影视剧备案',url:'http://211.146.10.138:8080/YSJBA/',type:'page',category:'备案'},
-      {name:'虎嗅',url:'https://rss.huxiu.com/',type:'rss',category:'行业'},
-      {name:'澎湃新闻-政务',url:'https://feedx.net/rss/thepaper.xml',type:'rss',category:'综合'},
-    ],
-    defaultKeywords:['备案','审查','许可证','播出','违规','下架','限令','综艺','电视剧','网络剧','动画片','广播电视','电影局','放映许可证','龙标'],
-    defaultAlertKeywords:['下架','违规','处罚','限令','整改','禁播','约谈'],
-    defaultAIPrompt:'你是{sys}的数据分析师。请根据以下监控数据，生成{type}摘要：1.政策法规变化；2.违规下架风险；3.备案审查动态。简明扼要，中文。'
-  },
-  piaofang: {
-    id:'piaofang', name:'中国电影票房监控', icon:'🎬',
-    desc:'实时采集影片票房、排片占比、上座率、场次、观影人次、口碑评分、舆情动态',
-    accent:'#D97706',
-    defaultSources:[
-      {name:'Google News-电影票房',url:'电影票房 中国 首日',type:'gnews',category:'票房'},
-      {name:'Google News-院线',url:'院线 排片 档期',type:'gnews',category:'院线'},
-      {name:'1905电影网',url:'https://www.1905.com/rss',type:'rss',category:'电影'},
-      {name:'虎嗅-文娱',url:'https://rss.huxiu.com/',type:'rss',category:'行业'},
-      {name:'澎湃新闻',url:'https://feedx.net/rss/thepaper.xml',type:'rss',category:'综合'},
-      {name:'猫眼专业版',url:'https://piaofang.maoyan.com/dashboard',type:'page',category:'票房数据'},
-    ],
-    defaultKeywords:['票房','排片','上座率','首日','预售','破亿','口碑','豆瓣','档期','院线','观影人次','票房冠军','票房纪录','春节档','国庆档','暑期档'],
-    defaultAlertKeywords:['票房破亿','撤档','偷票房','口碑崩','票房惨败'],
-    defaultAIPrompt:'你是{sys}的数据分析师。请根据以下监控数据，生成{type}摘要：1.票房排行榜及趋势；2.重点影片口碑与排片；3.档期市场动态。简明扼要，中文。'
-  },
-  duanju: {
-    id:'duanju', name:'短剧数据监控', icon:'📱',
-    desc:'聚焦全网短剧行业，实时采集播放量、点赞、评论、热度、竞品动态',
-    accent:'#7C3AED',
-    defaultSources:[
-      {name:'Google News-微短剧',url:'微短剧 短剧 小程序剧',type:'gnews',category:'行业'},
-      {name:'Google News-短剧投流',url:'短剧 投流 ROI 充值',type:'gnews',category:'投流'},
-      {name:'虎嗅',url:'https://rss.huxiu.com/',type:'rss',category:'行业'},
-      {name:'澎湃新闻',url:'https://feedx.net/rss/thepaper.xml',type:'rss',category:'综合'},
-      {name:'IT之家',url:'https://www.ithome.com/rss/',type:'rss',category:'科技'},
-      {name:'36氪-快讯',url:'https://36kr.com/newsflashes',type:'page',category:'快讯'},
-    ],
-    defaultKeywords:['短剧','微短剧','小程序剧','竖屏剧','充值','爆款','投流','ROI','短剧备案','快手短剧','抖音短剧','短剧出海','付费短剧','免费短剧','短剧平台'],
-    defaultAlertKeywords:['下架','监管','备案','违规','处罚','禁播','约谈'],
-    defaultAIPrompt:'你是{sys}的数据分析师。请根据以下监控数据，生成{type}摘要：1.短剧爆款趋势；2.监管与合规风险；3.平台与投流动态。简明扼要，中文。'
-  },
-  shangshi: {
-    id:'shangshi', name:'娱乐传媒上市公司监控', icon:'📈',
-    desc:'实时监控财报、营收、利润、股价、公告、舆情、项目动态及法律公告',
-    accent:'#0D9488',
-    defaultSources:[
-      {name:'Google News-传媒上市公司',url:'传媒 娱乐 上市公司 财报',type:'gnews',category:'财报'},
-      {name:'Google News-影视股',url:'影视股 娱乐股 股价',type:'gnews',category:'股市'},
-      {name:'巨潮资讯网',url:'http://www.cninfo.com.cn/new/disclosure/stock?stockId=&orgId=&tabname=fulltext',type:'page',category:'公告'},
-      {name:'虎嗅',url:'https://rss.huxiu.com/',type:'rss',category:'行业'},
-      {name:'澎湃新闻-财经',url:'https://feedx.net/rss/thepaper.xml',type:'rss',category:'综合'},
-      {name:'IT之家',url:'https://www.ithome.com/rss/',type:'rss',category:'科技'},
-    ],
-    defaultKeywords:['财报','营收','利润','股价','公告','增持','减持','定增','重组','立案','退市','业绩预告','年度报告','证监会','IPO','分红','股权','质押'],
-    defaultAlertKeywords:['立案','退市','亏损','暴跌','证监会','处罚','违规','诉讼','冻结','强平'],
-    defaultAIPrompt:'你是{sys}的数据分析师。请根据以下监控数据，生成{type}摘要：1.重要财报与业绩动态；2.股价异动与风险事件；3.监管处罚与合规风险。简明扼要，中文。'
-  }
-};
-
-// === CORS PROXIES ===
-const PROXIES = [
-  'https://corsproxy.io/?',
-  'https://api.allorigins.win/raw?url='
-];
-const RSS2JSON = 'https://api.rss2json.com/v1/api.json?rss_url=';
-
-// === AI PROVIDER PRESETS ===
-const AI_PROVIDERS = {
-  zhipu: {name:'智谱 GLM', url:'https://open.bigmodel.cn/api/paas/v4/chat/completions', model:'glm-4-flash', keyLabel:'API Key'},
-  deepseek: {name:'DeepSeek', url:'https://api.deepseek.com/v1/chat/completions', model:'deepseek-chat', keyLabel:'API Key'},
-  gemini: {name:'Google Gemini', url:'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions', model:'gemini-2.0-flash', keyLabel:'API Key'},
-  openai: {name:'OpenAI 兼容', url:'', model:'gpt-3.5-turbo', keyLabel:'API Key'},
-  custom: {name:'自定义', url:'', model:'', keyLabel:'API Key'}
-};
-
-// === STATE ===
-let curSys = null;
-let D = {};     // per-system data
-let rTimer = null;
-
-// === STORAGE HELPERS ===
-function sk(id, k) { return `mon_${id}_${k}`; }
-function lg(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } }
-function ls(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch(e) { console.warn('LS fail:', e); } }
-
-// === GOOGLE NEWS RSS BUILDER ===
-function buildGNewsRSS(query) {
-  return `https://news.google.com/rss/search?q=${encodeURIComponent(query)}&hl=zh-CN&gl=CN&ceid=CN:zh-Hans`;
-}
-
-// === INIT ===
 function init() {
-  for (const [id, sys] of Object.entries(SYS)) {
-    const sources = lg(sk(id,'src'), null);
-    const items = lg(sk(id,'items'), []);
-    const keywords = lg(sk(id,'kw'), null);
-    const alertKw = lg(sk(id,'akw'), null);
-    const settings = lg(sk(id,'cfg'), {});
-    const snaps = lg(sk(id,'snap'), {});
-    const aiPrompt = lg(sk(id,'aiprompt'), null);
-
-    D[id] = {
-      sources: sources || sys.defaultSources.map((s,i) => ({...s, id:`${id}_s${i}`, enabled:true})),
-      items, keywords: keywords || sys.defaultKeywords,
-      alertKw: alertKw || sys.defaultAlertKeywords,
-      aiPrompt: aiPrompt || sys.defaultAIPrompt || '',
-      cfg: Object.assign({interval:30, auto:true, notif:true, maxItems:500, blacklist:'', whitelist:'', notifFreq:'realtime', reportTime:'18:00'}, settings),
-      snaps, loading:false
-    };
-    if (sources === null) ls(sk(id,'src'), D[id].sources);
-    if (keywords === null) ls(sk(id,'kw'), D[id].keywords);
-    if (alertKw === null) ls(sk(id,'akw'), D[id].alertKw);
-    if (aiPrompt === null) ls(sk(id,'aiprompt'), D[id].aiPrompt);
+  initGlobalConfig();
+  // Init all subsystem data
+  for (const id of Object.keys(SYS)) {
+    sysData[id] = initSysData(id);
   }
-  // AI config - ensure test key is available for users
-  const aiExist = localStorage.getItem('mon_ai_cfg');
-  if (!aiExist) {
-    ls('mon_ai_cfg', {provider:'zhipu', url:'https://open.bigmodel.cn/api/paas/v4/chat/completions', model:'glm-4-flash', key:'89cf52e166744146a966eb905597a5ba.YvQflJOFgM3yX1o8', summarizePrompt:'', dedupPrompt:''});
-  } else {
-    // If key is empty, offer test key as default
-    const aiParsed = JSON.parse(aiExist);
-    if (!aiParsed.key) {
-      aiParsed.key = '89cf52e166744146a966eb905597a5ba.YvQflJOFgM3yX1o8';
-      ls('mon_ai_cfg', aiParsed);
-    }
+  renderPortal();
+  // Auto-refresh on first load
+  if (!autoRefreshDone) {
+    autoRefreshDone = true;
+    setTimeout(() => refreshAll(), 1000);
   }
-  document.documentElement.setAttribute('data-theme', lg('mon_theme', 'light'));
-  route();
-  window.addEventListener('hashchange', route);
   if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission();
 }
 
-function route() {
-  const h = location.hash.slice(1);
-  if (h && SYS[h]) enterSys(h); else showPortal();
-}
-
-// === PORTAL ===
-function showPortal() {
-  curSys = null; clearInterval(rTimer);
-  document.documentElement.removeAttribute('data-sys');
-  document.getElementById('pgPortal').classList.add('on');
-  document.getElementById('pgSys').classList.remove('on');
-  document.getElementById('hBrand').textContent = '行业监控系统';
-  document.getElementById('hSub').textContent = '娱乐资本论';
-  for (const id of Object.keys(SYS)) {
-    D[id].items = lg(sk(id,'items'), []);
-    D[id].sources = lg(sk(id,'src'), D[id].sources);
-  }
-  rPortal();
-}
-
-function rPortal() {
+function renderPortal() {
   const g = document.getElementById('ptlGrid');
   g.innerHTML = Object.values(SYS).map(s => {
-    const d = D[s.id];
-    return `<div class="ptl-c" onclick="location.hash='${s.id}'" style="--accent:${s.accent}">
+    const d = sysData[s.id];
+    const en = d.sources.filter(x => x.enabled).length;
+    const total = d.items.length;
+    const today = new Date(); today.setHours(0,0,0,0);
+    const todayN = d.items.filter(i => i.ts >= today.getTime()).length;
+    const hasUpdate = todayN > 0;
+    return `<div class="ptl-c ${hasUpdate?'has-update':''}" onclick="location.href='monitor.html#'+${s.id}" style="--accent:${s.accent}">
       <div class="ptl-i">${s.icon}</div>
       <div class="ptl-t">${s.name}</div>
       <div class="ptl-d">${s.desc}</div>
       <div style="margin-top:var(--space-md);display:flex;gap:var(--space-md)">
-        <span class="bdg bdg-l">${d.sources.filter(x=>x.enabled).length} 信息源</span>
-        <span class="bdg bdg-m">${d.items.length} 监控项</span>
+        <span class="ptl-badge ${hasUpdate?'has-update':''}">${en} 信息源</span>
+        <span class="ptl-badge">${total} 监控项</span>
+        ${todayN > 0 ? `<span class="ptl-badge" style="background:var(--accent);color:#fff">${todayN} 今日新增</span>` : ''}
       </div>
     </div>`;
   }).join('');
 }
 
-// === ENTER SYSTEM ===
-function enterSys(id) {
-  curSys = id;
-  const sys = SYS[id], d = D[id];
-  d.items = lg(sk(id,'items'), d.items);
-  d.sources = lg(sk(id,'src'), d.sources);
-  d.keywords = lg(sk(id,'kw'), d.keywords);
-  d.alertKw = lg(sk(id,'akw'), d.alertKw);
-  d.aiPrompt = lg(sk(id,'aiprompt'), d.aiPrompt);
-  d.cfg = Object.assign({interval:30,auto:true,notif:true,maxItems:500,blacklist:'',whitelist:'',notifFreq:'realtime',reportTime:'18:00'}, lg(sk(id,'cfg'), {}));
-
-  document.documentElement.setAttribute('data-sys', id);
-  document.getElementById('pgPortal').classList.remove('on');
-  document.getElementById('pgSys').classList.add('on');
-  document.getElementById('hBrand').textContent = sys.icon + ' ' + sys.name;
-  document.getElementById('hSub').textContent = '行业监控系统';
-  document.querySelectorAll('#sysTabs .tab').forEach((t,i) => t.classList.toggle('on', i===0));
-  document.querySelectorAll('.tp').forEach((p,i) => p.style.display = i===0?'block':'none');
-  rDash(); rSrc(); rTl(); rKw(); rRp(); rCharts();
-  clearInterval(rTimer);
-  if (d.cfg.auto) rTimer = setInterval(() => refreshData(), d.cfg.interval * 60000);
-}
-
-function goPortal() { location.hash = ''; }
-
-// === TABS ===
-function swTab(btn) {
-  const t = btn.dataset.tab;
-  document.querySelectorAll('#sysTabs .tab').forEach(x => x.classList.remove('on'));
-  btn.classList.add('on');
-  const map = {dashboard:'pDash',sources:'pSrc',timeline:'pTl',keywords:'pKw',reports:'pRp'};
-  Object.values(map).forEach(id => document.getElementById(id).style.display = 'none');
-  document.getElementById(map[t]).style.display = 'block';
-  if (t === 'dashboard') rCharts();
-}
-
-// === THEME ===
-function toggleTheme() {
-  const cur = document.documentElement.getAttribute('data-theme');
-  const nxt = cur === 'dark' ? 'light' : 'dark';
-  document.documentElement.setAttribute('data-theme', nxt);
-  ls('mon_theme', nxt);
-}
-
-// === TOAST ===
-function toast(msg, cls='') {
-  const c = document.getElementById('tc');
-  const el = document.createElement('div');
-  el.className = 'tst ' + cls;
-  el.textContent = msg;
-  c.appendChild(el);
-  setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translateX(20px)'; setTimeout(() => el.remove(), 300); }, 4000);
-}
-
-// === LOADING BAR ===
-function ldBar(pct) {
-  const bar = document.getElementById('ldBar');
-  if (pct <= 0) { bar.classList.remove('on'); bar.style.width = '0'; return; }
-  bar.classList.add('on');
-  bar.style.width = pct + '%';
-  if (pct >= 100) setTimeout(() => ldBar(0), 500);
-}
-
-// === FETCH WITH PROXY ===
-async function fetchProxy(url) {
-  let lastErr = null;
-  for (const proxy of PROXIES) {
-    try {
-      const ctrl = new AbortController();
-      const tid = setTimeout(() => ctrl.abort(), 15000);
-      const resp = await fetch(proxy + encodeURIComponent(url) + '&_t=' + Date.now(), {signal: ctrl.signal});
-      clearTimeout(tid);
-      if (!resp.ok) throw new Error('HTTP ' + resp.status);
-      const buf = await resp.arrayBuffer();
-      return new TextDecoder('utf-8').decode(buf);
-    } catch(e) { lastErr = e; }
-  }
-  throw lastErr || new Error('All proxies failed');
-}
-
-// === PARSE RSS from XML ===
-function parseRSS(xml, src) {
-  try {
-    const doc = new DOMParser().parseFromString(xml, 'text/xml');
-    if (doc.querySelector('parsererror')) return [];
-    const items = doc.querySelectorAll('item, entry');
-    const out = [];
-    items.forEach(el => {
-      let title = el.querySelector('title')?.textContent?.trim();
-      let link = el.querySelector('link')?.textContent?.trim();
-      if (!link) { const le = el.querySelector('link[href]'); if (le) link = le.getAttribute('href'); }
-      let pubDate = el.querySelector('pubDate, published, updated')?.textContent?.trim();
-      if (!title || !link) return;
-      let source = src.name;
-      if (title.includes(' - ') && title.split(' - ').pop().length < 20) {
-        source = title.split(' - ').pop();
-        title = title.split(' - ').slice(0, -1).join(' - ');
-      }
-      let ts = Date.now();
-      if (pubDate) { const p = new Date(pubDate).getTime(); if (!isNaN(p)) ts = p; }
-      out.push({id: link+'_'+ts, title, url: link, source, srcId: src.id, ts, type: src.type, cat: src.category||'默认', read:false, important:false});
-    });
-    return out.slice(0, 10);
-  } catch(e) { return []; }
-}
-
-// === PARSE RSS from rss2json API response ===
-function parseRSS2JSON(data, src) {
-  try {
-    if (!data.items || !Array.isArray(data.items)) return [];
-    return data.items.map(item => {
-      let title = item.title || '';
-      let link = item.link || '';
-      let source = src.name;
-      if (title.includes(' - ') && title.split(' - ').pop().length < 20) {
-        source = title.split(' - ').pop();
-        title = title.split(' - ').slice(0, -1).join(' - ');
-      }
-      let ts = item.pubDate ? new Date(item.pubDate).getTime() : Date.now();
-      if (isNaN(ts)) ts = Date.now();
-      return {id: link+'_'+ts, title, url: link, source, srcId: src.id, ts, type: src.type, cat: src.category||'默认', read:false, important:false};
-    }).slice(0, 10);
-  } catch(e) { return []; }
-}
-
-// === PARSE PAGE ===
-// Common boilerplate patterns to filter out from page parsing
-const PAGE_NOISE = /(?:ICP备|ICP证|公网安备|版权所有|技术支持|浏览器推荐|推荐使用|分辨率|访问量|主办单位|承办单位|联系我们|信访|投诉|举报|网站地图|设为首页|加入收藏|刷新过于频繁|稍后再试|页面不存在|已删除|error|404|403|forbidden)/i;
-
-function parsePage(html, src, snapshot) {
-  try {
-    // Quick check for error pages
-    if (html.length < 200 || /<title>\s*(error|404|403|forbidden|not found)/i.test(html)) return [];
-    const doc = new DOMParser().parseFromString(html, 'text/html');
-    const body = doc.body; if (!body) return [];
-    // Remove noise elements
-    body.querySelectorAll('script,style,nav,footer,header,.footer,.header,.nav,.navbar,.breadcrumb,.copyright,.icp,#footer,#header,#nav').forEach(s => s.remove());
-    const text = body.innerText || '';
-    const lines = text.split('\n').map(l=>l.trim()).filter(l=>l.length>10 && l.length<300 && !PAGE_NOISE.test(l));
-    if (!lines.length) return [];
-    if (!snapshot) {
-      // First visit: return meaningful lines as items
-      return lines.slice(0, 15).map((line, i) => ({
-        id: src.id+'_init_'+Date.now()+'_'+i, title: line.substring(0,120), url: src.url,
-        source: src.name, srcId: src.id, ts: Date.now(), type:'page',
-        cat: src.category||'默认', read:false, important:false
-      }));
-    }
-    const oldSet = new Set(snapshot.split('\n').map(l=>l.trim()).filter(l=>l.length>10 && !PAGE_NOISE.test(l)));
-    const newLines = lines.filter(l=>!oldSet.has(l));
-    if (!newLines.length) return [];
-    return newLines.slice(0,20).map((line,i) => ({
-      id: src.id+'_'+Date.now()+'_'+i, title: line.substring(0,120), url: src.url,
-      source: src.name, srcId: src.id, ts: Date.now(), type:'page',
-      cat: src.category||'默认', read:false, important:false
-    }));
-  } catch(e) { return []; }
-}
-
-// === REFRESH ===
-async function refreshData() {
-  if (!curSys) return;
-  const d = D[curSys];
-  if (d.loading) return;
-  d.loading = true;
-  ldBar(10);
+async function refreshAll() {
   const btn = document.getElementById('rfBtn');
   btn.style.opacity = '0.5';
-
-  const enabled = d.sources.filter(s => s.enabled);
-  let newItems = [], ok = 0, fail = 0;
-  const total = enabled.length;
-
-  for (let i = 0; i < total; i++) {
-    const src = enabled[i];
-    ldBar(10 + 80 * (i / total));
-    try {
-      let items = [];
-      let actualUrl = src.url;
-
-      // Google News type: build RSS URL from keywords
-      if (src.type === 'gnews') {
-        actualUrl = buildGNewsRSS(src.url);
-        src._resolvedUrl = actualUrl;
-      } else {
-        src._resolvedUrl = src.url;
-      }
-
-      if (src.type === 'rss' || src.type === 'gnews') {
-        // Try rss2json first
-        try {
-          const ctrl = new AbortController();
-          const tid = setTimeout(() => ctrl.abort(), 15000);
-          const resp = await fetch(RSS2JSON + encodeURIComponent(actualUrl), {signal: ctrl.signal});
-          clearTimeout(tid);
-          if (resp.ok) {
-            const data = await resp.json();
-            if (data.status === 'ok' && data.items?.length) {
-              items = parseRSS2JSON(data, src);
-            }
-          }
-        } catch(e) {}
-        // Fallback to direct proxy
-        if (!items.length) {
+  ldBar(5);
+  let totalOk = 0, totalFail = 0;
+  const ids = Object.keys(SYS);
+  for (let si = 0; si < ids.length; si++) {
+    const id = ids[si];
+    const d = sysData[id];
+    ldBar(5 + 90 * (si / ids.length));
+    const enabled = d.sources.filter(s => s.enabled);
+    let ok = 0, fail = 0;
+    for (const src of enabled) {
+      try {
+        let items = [];
+        if (src.type === 'rss') {
           try {
-            const xml = await fetchProxy(actualUrl);
-            items = parseRSS(xml, src);
+            const ctrl = new AbortController(); const tid = setTimeout(() => ctrl.abort(), 12000);
+            const resp = await fetch(RSS2JSON + encodeURIComponent(src.url), {signal: ctrl.signal});
+            clearTimeout(tid);
+            if (resp.ok) { const data = await resp.json(); if (data.status === 'ok' && data.items?.length) items = parseRSS2JSON(data, src); }
           } catch(e) {}
+          if (!items.length) { try { const xml = await fetchProxy(src.url); items = parseRSS(xml, src); } catch(e) {} }
+          items.length ? ok++ : fail++;
+        } else {
+          try {
+            const html = await fetchProxy(src.url);
+            const oldSnap = d.snaps[src.id] || null;
+            items = parsePage(html, src, oldSnap);
+            d.snaps[src.id] = html; ls(sk(id, 'snap'), d.snaps);
+            ok++;
+          } catch(e) { fail++; }
         }
-        if (items.length) { ok++; } else { fail++; }
-      } else {
-        // Page type - fetch and diff
-        try {
-          const html = await fetchProxy(src.url);
-          const oldSnap = d.snaps[src.id] || null;
-          items = parsePage(html, src, oldSnap);
-          d.snaps[src.id] = html;
-          ls(sk(curSys,'snap'), d.snaps);
-          ok++;
-        } catch(e) { fail++; }
-      }
-      newItems.push(...items);
-    } catch(e) {
-      console.warn('Fetch fail:', src.name, e.message);
-      fail++;
+        // Relevance filter for generic RSS
+        const allKw = [...d.keywords, ...d.alertKw].map(k => k.toLowerCase());
+        const filtered = items.filter(item => {
+          if (item.type === 'page') return true;
+          const txt = (item.title || '').toLowerCase();
+          return allKw.some(kw => txt.includes(kw));
+        });
+        if (filtered.length > 0) items = filtered;
+        // Keyword match
+        items.forEach(item => {
+          const txt = (item.title || '').toLowerCase();
+          allKw.forEach(kw => { if (txt.includes(kw)) item.important = true; });
+        });
+        // Dedup
+        const existIds = new Set(d.items.map(i => i.url + '|' + i.title));
+        const unique = items.filter(i => !existIds.has(i.url + '|' + i.title));
+        d.items = [...unique, ...d.items].slice(0, d.cfg.maxItems);
+        ls(sk(id, 'items'), d.items);
+      } catch(e) { fail++; }
     }
+    totalOk += ok; totalFail += fail;
   }
-
-  ldBar(95);
-
-  // Dedup
-  const seen = new Set();
-  const deduped = newItems.filter(i => {
-    const key = i.url + '|' + i.title;
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
-  const existIds = new Set(d.items.map(i => i.url + '|' + i.title));
-  const unique = deduped.filter(i => !existIds.has(i.url + '|' + i.title));
-
-  // AI dedup if configured
-  let finalItems = unique;
-  const aiCfg = lg('mon_ai_cfg', {});
-  if (aiCfg.key && aiCfg.dedupPrompt !== undefined && unique.length > 1) {
-    try {
-      const titles = unique.map(i => i.title).join('\n');
-      const dedupPrompt = (aiCfg.dedupPrompt || '以下新闻标题中，识别并去除重复或高度相似的条目，返回去重后的标题列表，每行一个：\n') + titles;
-      const aiResult = await callAI(dedupPrompt);
-      if (aiResult && aiResult !== '无摘要') {
-        const keptTitles = aiResult.split('\n').map(t=>t.replace(/^[\s\-•*\d.]+/,'').trim()).filter(t=>t.length>3);
-        if (keptTitles.length > 0 && keptTitles.length < unique.length) {
-          const keptSet = new Set(keptTitles.map(t=>t.toLowerCase()));
-          finalItems = unique.filter(i => keptSet.has(i.title.toLowerCase()) || keptTitles.some(kt => i.title.toLowerCase().includes(kt.toLowerCase())));
-          if (finalItems.length === 0) finalItems = unique; // safety fallback
-        }
-      }
-    } catch(e) { /* fallback to no AI dedup */ }
-  }
-
-  // Keyword match + relevance filtering
-  const allKw = [...d.keywords, ...d.alertKw];
-  finalItems.forEach(item => {
-    const txt = (item.title||'').toLowerCase();
-    allKw.forEach(kw => { if (txt.includes(kw.toLowerCase())) item.important = true; });
-  });
-  // Filter for relevance: keep items that match at least one keyword OR are from page/gnews sources
-  // This reduces noise from generic RSS feeds
-  const kwLower = allKw.map(k => k.toLowerCase());
-  const relevanceFiltered = finalItems.filter(item => {
-    // Always keep items from page monitoring and Google News (they're already keyword-targeted)
-    if (item.type === 'page' || item.type === 'gnews') return true;
-    // For generic RSS, only keep if matches at least one keyword
-    const txt = (item.title||'').toLowerCase();
-    return kwLower.some(kw => txt.includes(kw));
-  });
-  // If filtering removes everything, keep original (safety)
-  if (relevanceFiltered.length > 0) finalItems = relevanceFiltered;
-
-  // Merge & trim
-  d.items = [...finalItems, ...d.items].slice(0, d.cfg.maxItems);
-  ls(sk(curSys,'items'), d.items);
-
-  // Notify
-  if (d.cfg.notif && finalItems.length > 0) {
-    const alerts = finalItems.filter(i => {
-      const txt = (i.title||'').toLowerCase();
-      return d.alertKw.some(k => txt.includes(k.toLowerCase()));
-    });
-    if (alerts.length > 0 && 'Notification' in window && Notification.permission === 'granted') {
-      try { new Notification(SYS[curSys].name + ' - 告警', {body: `发现${alerts.length}条告警：${alerts[0].title.substring(0,50)}`}); } catch(e) {}
-    }
-  }
-
-  d.loading = false;
-  btn.style.opacity = '1';
   ldBar(100);
-
-  if (finalItems.length > 0) toast(`新增 ${finalItems.length} 条 (成功 ${ok}/${total})`, 'ok');
-  else toast(`已刷新 (成功 ${ok}/${total})`, ok > 0 ? 'ok' : 'err');
-
-  rDash(); rTl(); rCharts();
-}
-
-// === DASHBOARD ===
-function rDash() {
-  if (!curSys) return;
-  const d = D[curSys];
-  const en = d.sources.filter(s=>s.enabled).length;
-  const total = d.items.length;
-  const imp = d.items.filter(i=>i.important).length;
-  const today = new Date(); today.setHours(0,0,0,0);
-  const todayN = d.items.filter(i => i.ts >= today.getTime()).length;
-  const unread = d.items.filter(i => !i.read).length;
-
-  document.getElementById('dsStats').innerHTML = `
-    <div class="ds-c"><div class="ds-l">活跃信息源</div><div class="ds-v">${en}</div><div class="ds-s">共 ${d.sources.length} 个</div></div>
-    <div class="ds-c"><div class="ds-l">今日新增</div><div class="ds-v">${todayN}</div><div class="ds-s">总计 ${total}</div></div>
-    <div class="ds-c"><div class="ds-l">重要/告警</div><div class="ds-v">${imp}</div><div class="ds-s">需关注</div></div>
-    <div class="ds-c"><div class="ds-l">未读</div><div class="ds-v">${unread}</div><div class="ds-s">关键字 ${d.keywords.length}</div></div>`;
-
-  const recent = d.items.slice(0, 10);
-  if (!recent.length) {
-    document.getElementById('dsRecent').innerHTML = '<div class="emp"><div class="emp-i">📭</div><div class="emp-t">暂无监控数据</div><button class="btn btn-p" onclick="refreshData()">立即采集</button></div>';
-  } else {
-    document.getElementById('dsRecent').innerHTML = recent.map(i => `
-      <div style="padding:var(--space-sm) 0;border-bottom:1px solid var(--border);display:flex;gap:var(--space-sm);align-items:baseline;flex-wrap:wrap">
-        <span style="font-family:var(--font-mono);font-size:var(--font-xs);color:var(--text-muted);flex-shrink:0">${fmtTime(i.ts)}</span>
-        <span class="bdg ${i.important?'bdg-a':'bdg-m'}" style="flex-shrink:0">${esc(i.source)}</span>
-        <a href="${esc(i.url)}" target="_blank" style="font-size:var(--font-sm);color:var(--text)">${hlKw(esc(i.title))}</a>
-      </div>`).join('');
-  }
-}
-
-// === CHARTS ===
-function rCharts() {
-  if (!curSys) return;
-  const d = D[curSys];
-  rWorldMap(d);
-  rPieChart(d);
-  rBarChart(d);
-  rLineChart(d);
-}
-
-// World Map (silhouette - no China map)
-function rWorldMap(d) {
-  const cats = {};
-  d.sources.forEach(s => { const c = s.category||'默认'; cats[c] = (cats[c]||0) + 1; });
-  const dots = Object.entries(cats).map(([cat, count], i) => {
-    // Distribute dots across world map area
-    const positions = [
-      {x:180,y:80},{x:300,y:100},{x:420,y:90},{x:540,y:110},{x:200,y:160},
-      {x:350,y:150},{x:480,y:140},{x:160,y:200},{x:280,y:190},{x:400,y:200},
-      {x:520,y:180},{x:250,y:130},{x:450,y:160},{x:350,y:120}
-    ];
-    const pos = positions[i % positions.length];
-    const r = Math.max(8, Math.min(20, count * 5));
-    return `<circle cx="${pos.x}" cy="${pos.y}" r="${r}" fill="var(--accent)" opacity="0.6">
-      <title>${esc(cat)}: ${count}个信息源</title>
-      <animate attributeName="r" values="${r};${r+3};${r}" dur="3s" repeatCount="indefinite"/>
-    </circle><text x="${pos.x}" y="${pos.y+4}" text-anchor="middle" fill="var(--text)" font-size="9" font-weight="700">${count}</text>`;
-  }).join('');
-
-  // Simplified world silhouette paths
-  document.getElementById('dsMap').innerHTML = `<svg viewBox="0 0 700 280" xmlns="http://www.w3.org/2000/svg">
-    <rect width="700" height="280" fill="var(--bg-secondary)" rx="8"/>
-    <!-- Simplified world continents silhouette -->
-    <path d="M80,60 Q90,40 120,45 Q140,35 160,50 Q170,45 180,55 L175,70 Q165,80 150,85 Q140,95 125,90 Q110,85 100,75 Z" fill="var(--border)" opacity="0.5"/>
-    <path d="M200,45 Q220,30 260,35 Q290,40 310,55 Q320,50 340,60 L335,80 Q310,95 280,90 Q250,85 230,70 Q210,60 200,45 Z" fill="var(--border)" opacity="0.5"/>
-    <path d="M360,40 Q390,30 430,35 Q470,40 500,55 Q520,45 540,60 L535,90 Q500,100 460,95 Q420,90 390,75 Q370,60 360,40 Z" fill="var(--border)" opacity="0.5"/>
-    <path d="M560,50 Q580,40 610,45 Q630,55 640,70 L635,85 Q620,95 600,90 Q580,80 570,65 Z" fill="var(--border)" opacity="0.5"/>
-    <path d="M130,110 Q150,100 170,110 Q180,120 175,140 Q165,155 150,160 Q135,155 125,140 Q120,125 130,110 Z" fill="var(--border)" opacity="0.5"/>
-    <path d="M250,100 Q270,90 300,95 Q330,100 350,120 Q360,130 355,150 Q340,170 310,175 Q280,170 260,150 Q245,130 250,100 Z" fill="var(--border)" opacity="0.5"/>
-    <path d="M450,100 Q480,85 520,90 Q550,100 560,120 Q565,140 550,160 Q530,175 500,170 Q470,160 460,140 Q445,120 450,100 Z" fill="var(--border)" opacity="0.5"/>
-    <path d="M180,180 Q200,170 220,180 Q230,195 225,215 Q210,230 195,225 Q180,215 180,195 Z" fill="var(--border)" opacity="0.5"/>
-    <path d="M580,170 Q600,160 620,170 Q630,190 625,210 Q610,225 595,220 Q580,210 580,190 Z" fill="var(--border)" opacity="0.5"/>
-    <!-- Grid lines -->
-    <line x1="0" y1="140" x2="700" y2="140" stroke="var(--border)" stroke-width="0.5" stroke-dasharray="4,4" opacity="0.3"/>
-    <line x1="350" y1="0" x2="350" y2="280" stroke="var(--border)" stroke-width="0.5" stroke-dasharray="4,4" opacity="0.3"/>
-    ${dots}
-    <text x="350" y="270" text-anchor="middle" fill="var(--text-muted)" font-size="10">信息源分布示意</text>
-  </svg>`;
-}
-
-// Pie Chart
-function rPieChart(d) {
-  const cats = {};
-  d.items.forEach(i => { const c = i.cat||'默认'; cats[c] = (cats[c]||0) + 1; });
-  const entries = Object.entries(cats).sort((a,b) => b[1]-a[1]);
-  if (!entries.length) {
-    document.getElementById('dsPie').innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:40px">暂无数据</div>';
-    return;
-  }
-  const total = entries.reduce((s,e) => s+e[1], 0);
-  const colors = ['#E91E8C','#1565C0','#D97706','#7C3AED','#0D9488','#E53E3E','#38A169','#DD6B20','#3182CE','#805AD5'];
-  let paths = '', legend = '', angle = 0;
-  entries.forEach(([cat, count], i) => {
-    const pct = count / total;
-    const startAngle = angle;
-    const endAngle = angle + pct * 360;
-    const startRad = startAngle * Math.PI / 180;
-    const endRad = endAngle * Math.PI / 180;
-    const x1 = 100 + 80 * Math.cos(startRad - Math.PI/2);
-    const y1 = 100 + 80 * Math.sin(startRad - Math.PI/2);
-    const x2 = 100 + 80 * Math.cos(endRad - Math.PI/2);
-    const y2 = 100 + 80 * Math.sin(endRad - Math.PI/2);
-    const largeArc = pct > 0.5 ? 1 : 0;
-    paths += `<path d="M100,100 L${x1},${y1} A80,80 0 ${largeArc},1 ${x2},${y2} Z" fill="${colors[i%colors.length]}" opacity="0.8">
-      <title>${esc(cat)}: ${count}条 (${(pct*100).toFixed(1)}%)</title></path>`;
-    legend += `<div style="display:flex;align-items:center;gap:4px;margin:2px 0"><span style="width:10px;height:10px;border-radius:2px;background:${colors[i%colors.length]};flex-shrink:0"></span><span style="font-size:11px;color:var(--text-secondary)">${esc(cat)} ${count}</span></div>`;
-    angle = endAngle;
-  });
-  document.getElementById('dsPie').innerHTML = `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">${paths}<circle cx="100" cy="100" r="35" fill="var(--bg-card)"/><text x="100" y="96" text-anchor="middle" fill="var(--text)" font-size="14" font-weight="900">${total}</text><text x="100" y="112" text-anchor="middle" fill="var(--text-muted)" font-size="9">总计</text></svg><div style="position:absolute;right:8px;top:8px">${legend}</div>`;
-}
-
-// Bar Chart
-function rBarChart(d) {
-  const srcCount = {};
-  d.items.forEach(i => { srcCount[i.source] = (srcCount[i.source]||0) + 1; });
-  const entries = Object.entries(srcCount).sort((a,b) => b[1]-a[1]).slice(0,8);
-  if (!entries.length) {
-    document.getElementById('dsBar').innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:40px">暂无数据</div>';
-    return;
-  }
-  const max = Math.max(...entries.map(e=>e[1]));
-  const barW = 30, gap = 8, chartH = 140, baseY = 160, startX = 60;
-  let bars = '', labels = '';
-  entries.forEach(([name, count], i) => {
-    const x = startX + i * (barW + gap);
-    const h = max > 0 ? (count / max) * chartH : 0;
-    bars += `<rect x="${x}" y="${baseY - h}" width="${barW}" height="${h}" rx="3" fill="var(--accent)" opacity="0.8">
-      <title>${esc(name)}: ${count}条</title></rect>`;
-    bars += `<text x="${x + barW/2}" y="${baseY - h - 4}" text-anchor="middle" fill="var(--text)" font-size="9" font-weight="700">${count}</text>`;
-    labels += `<text x="${x + barW/2}" y="${baseY + 14}" text-anchor="middle" fill="var(--text-muted)" font-size="8" transform="rotate(-30,${x+barW/2},${baseY+14})">${esc(name.length>6?name.slice(0,6)+'…':name)}</text>`;
-  });
-  document.getElementById('dsBar').innerHTML = `<svg viewBox="0 0 ${startX + entries.length*(barW+gap) + 20} 190" xmlns="http://www.w3.org/2000/svg">
-    <line x1="${startX-5}" y1="${baseY}" x2="${startX + entries.length*(barW+gap)+10}" y2="${baseY}" stroke="var(--border)" stroke-width="1"/>
-    ${bars}${labels}
-  </svg>`;
-}
-
-// Line Chart
-function rLineChart(d) {
-  // Group items by day for last 7 days
-  const days = [];
-  const now = new Date();
-  for (let i = 6; i >= 0; i--) {
-    const day = new Date(now);
-    day.setDate(day.getDate() - i);
-    day.setHours(0,0,0,0);
-    const nextDay = new Date(day);
-    nextDay.setDate(nextDay.getDate() + 1);
-    const count = d.items.filter(it => it.ts >= day.getTime() && it.ts < nextDay.getTime()).length;
-    days.push({label: `${day.getMonth()+1}/${day.getDate()}`, count});
-  }
-  const max = Math.max(...days.map(d=>d.count), 1);
-  const chartW = 350, chartH = 120, padX = 50, padY = 20, baseY = chartH + padY;
-  const step = chartW / (days.length - 1 || 1);
-  let points = '', gridLines = '', xLabels = '';
-  days.forEach((day, i) => {
-    const x = padX + i * step;
-    const y = baseY - (day.count / max) * chartH;
-    points += (i === 0 ? 'M' : 'L') + `${x},${y}`;
-    gridLines += `<circle cx="${x}" cy="${y}" r="4" fill="var(--accent)"><title>${day.label}: ${day.count}条</title></circle>`;
-    gridLines += `<text x="${x}" y="${baseY + 16}" text-anchor="middle" fill="var(--text-muted)" font-size="9">${day.label}</text>`;
-  });
-  document.getElementById('dsLine').innerHTML = `<svg viewBox="0 0 ${chartW+padX+20} ${chartH+padY+30}" xmlns="http://www.w3.org/2000/svg">
-    <line x1="${padX}" y1="${baseY}" x2="${padX+chartW+10}" y2="${baseY}" stroke="var(--border)" stroke-width="1"/>
-    <line x1="${padX}" y1="${padY}" x2="${padX}" y2="${baseY}" stroke="var(--border)" stroke-width="1"/>
-    <path d="${points}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"/>
-    <path d="${points} L${padX+(days.length-1)*step},${baseY} L${padX},${baseY} Z" fill="var(--accent)" opacity="0.1"/>
-    ${gridLines}
-  </svg>`;
-}
-
-// === SOURCES ===
-function rSrc() {
-  if (!curSys) return;
-  const d = D[curSys];
-  if (!d.sources.length) { document.getElementById('srcList').innerHTML = '<div class="emp"><div class="emp-i">📡</div><div class="emp-t">暂无信息源</div></div>'; return; }
-  document.getElementById('srcList').innerHTML = d.sources.map(s => {
-    const typeLabel = s.type === 'gnews' ? 'GNEWS' : s.type.toUpperCase();
-    const displayUrl = s.type === 'gnews' ? '关键字: ' + s.url : s.url;
-    return `<div class="si">
-      <label class="tog" style="flex-shrink:0"><input type="checkbox" ${s.enabled?'checked':''} onchange="togSrc('${s.id}',this.checked)"><span class="tog-t"><span class="tog-k"></span></span></label>
-      <span class="si-n" title="${esc(s.name)}">${esc(s.name)}</span>
-      <span class="si-t">${typeLabel}</span>
-      <span class="si-u" title="${esc(displayUrl)}">${esc(displayUrl)}</span>
-      <span class="bdg bdg-m">${esc(s.category||'默认')}</span>
-      <button class="btn btn-sm btn-g" onclick="rmSrc('${s.id}')" style="color:var(--err)">删除</button>
-    </div>`;
-  }).join('');
-  const cats = [...new Set(d.sources.map(s=>s.category||'默认'))];
-  const sel = document.getElementById('tlF');
-  const cv = sel.value;
-  sel.innerHTML = '<option value="">全部</option>' + cats.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
-  sel.value = cv;
-}
-
-function addSrc() {
-  if (!curSys) return;
-  const name = document.getElementById('sN').value.trim();
-  const url = document.getElementById('sU').value.trim();
-  const type = document.getElementById('sT').value;
-  const category = document.getElementById('sC').value.trim() || '默认';
-  if (!name || !url) { toast('请填写名称和URL/关键字','err'); return; }
-  const d = D[curSys];
-  d.sources.push({id: curSys+'_s_'+Date.now(), name, url, type, category, enabled:true});
-  ls(sk(curSys,'src'), d.sources);
-  document.getElementById('sN').value = ''; document.getElementById('sU').value = ''; document.getElementById('sC').value = '';
-  rSrc(); toast('信息源已添加','ok');
-}
-
-function rmSrc(id) {
-  if (!curSys) return;
-  const d = D[curSys];
-  d.sources = d.sources.filter(s => s.id !== id);
-  ls(sk(curSys,'src'), d.sources);
-  rSrc(); toast('信息源已删除');
-}
-
-function togSrc(id, en) {
-  if (!curSys) return;
-  const d = D[curSys];
-  const s = d.sources.find(s => s.id === id);
-  if (s) s.enabled = en;
-  ls(sk(curSys,'src'), d.sources);
-  rDash();
-}
-
-function impSrc() {
-  if (!curSys) return;
-  const inp = document.createElement('input'); inp.type='file'; inp.accept='.json';
-  inp.onchange = e => {
-    const f = e.target.files[0]; if (!f) return;
-    const r = new FileReader();
-    r.onload = ev => {
-      try {
-        const data = JSON.parse(ev.target.result);
-        const arr = Array.isArray(data) ? data : (data.sources || []);
-        const d = D[curSys];
-        arr.forEach(s => { if (s.url && s.name) d.sources.push({...s, id: s.id||curSys+'_s_'+Date.now()+'_'+Math.random().toString(36).slice(2,6), enabled:s.enabled!==false, type:s.type||'rss', category:s.category||'导入'}); });
-        ls(sk(curSys,'src'), d.sources); rSrc(); toast('导入成功','ok');
-      } catch(e) { toast('导入失败','err'); }
-    };
-    r.readAsText(f);
-  };
-  inp.click();
-}
-
-function expSrc() {
-  if (!curSys) return;
-  const json = JSON.stringify(D[curSys].sources, null, 2);
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([json],{type:'application/json'}));
-  a.download = `monitor_${curSys}_sources.json`; a.click();
-  toast('已导出信息源','ok');
-}
-
-// === TIMELINE ===
-function rTl() {
-  if (!curSys) return;
-  const d = D[curSys];
-  const search = (document.getElementById('tlS')?.value||'').toLowerCase();
-  const filter = document.getElementById('tlF')?.value||'';
-  let items = d.items;
-  if (search) items = items.filter(i => (i.title||'').toLowerCase().includes(search) || (i.source||'').toLowerCase().includes(search));
-  if (filter) items = items.filter(i => (i.cat||'') === filter);
-  if (!items.length) { document.getElementById('tlList').innerHTML = '<div class="emp"><div class="emp-i">📭</div><div class="emp-t">暂无监控数据</div><button class="btn btn-p" onclick="refreshData()">立即采集</button></div>'; return; }
-  document.getElementById('tlList').innerHTML = items.slice(0,100).map(i => `
-    <div class="tl-i ${i.important?'imp':''}">
-      <div><span class="tl-tm">${fmtTime(i.ts)}</span><span class="tl-src">${esc(i.source)}</span><span class="tl-tag">${esc(i.cat||'默认')}</span></div>
-      <div class="tl-tt"><a href="${esc(i.url)}" target="_blank">${hlKw(esc(i.title))}</a></div>
-      <div class="tl-url">${esc(i.url)}</div>
-      <div class="tl-act">
-        <button class="btn btn-sm btn-g" onclick="mkRead('${esc(i.id)}')">${i.read?'已读':'标为已读'}</button>
-        <button class="btn btn-sm btn-g" onclick="aiSumItem('${esc(i.id)}')">AI摘要</button>
-        <button class="btn btn-sm btn-g" onclick="rmItem('${esc(i.id)}')">删除</button>
-      </div>
-    </div>`).join('');
-}
-
-function mkRead(id) { if (!curSys) return; const d = D[curSys]; const i = d.items.find(x=>x.id===id); if (i) { i.read=true; ls(sk(curSys,'items'),d.items); rTl(); } }
-function rmItem(id) { if (!curSys) return; const d = D[curSys]; d.items=d.items.filter(x=>x.id!==id); ls(sk(curSys,'items'),d.items); rTl(); rDash(); }
-
-// AI summarize single item
-async function aiSumItem(id) {
-  if (!curSys) return;
-  const d = D[curSys];
-  const item = d.items.find(x=>x.id===id);
-  if (!item) return;
-  const aiCfg = lg('mon_ai_cfg', {});
-  if (!aiCfg.key) { toast('请先在设置中配置AI API Key','err'); return; }
-  toast('正在生成AI摘要...','');
-  try {
-    const prompt = (aiCfg.summarizePrompt || '请用中文简要概括以下新闻的核心内容，不超过100字：\n') + item.title + '\n' + item.url;
-    const result = await callAI(prompt);
-    // Show in a simple alert-like modal
-    const el = document.createElement('div');
-    el.className = 'mdl-o on';
-    el.innerHTML = `<div class="mdl"><div class="mdl-h"><span class="mdl-t">AI摘要</span><button class="mdl-x" onclick="this.closest('.mdl-o').remove()">&times;</button></div><div class="mdl-b"><p style="font-size:var(--font-sm);line-height:1.8">${esc(result)}</p></div></div>`;
-    document.body.appendChild(el);
-    el.addEventListener('click', e => { if (e.target === el) el.remove(); });
-  } catch(e) { toast('AI摘要失败: '+e.message,'err'); }
-}
-
-// === KEYWORDS ===
-function rKw() {
-  if (!curSys) return;
-  const d = D[curSys];
-  document.getElementById('kwL').innerHTML = d.keywords.map((kw,i) => `<span class="bdg bdg-l" style="cursor:pointer" onclick="rmKw(${i})" title="点击删除">${esc(kw)} &times;</span>`).join('');
-  document.getElementById('akL').innerHTML = d.alertKw.map((kw,i) => `<span class="bdg bdg-a" style="cursor:pointer" onclick="rmAKw(${i})" title="点击删除">${esc(kw)} &times;</span>`).join('');
-  // Set AI prompt
-  document.getElementById('rpPrompt').value = d.aiPrompt || '';
-}
-
-function addKw() {
-  if (!curSys) return;
-  const inp = document.getElementById('kwI'); const kw = inp.value.trim(); if (!kw) return;
-  const d = D[curSys]; if (!d.keywords.includes(kw)) { d.keywords.push(kw); ls(sk(curSys,'kw'),d.keywords); }
-  inp.value = ''; rKw();
-}
-
-function rmKw(i) { if (!curSys) return; const d = D[curSys]; d.keywords.splice(i,1); ls(sk(curSys,'kw'),d.keywords); rKw(); }
-
-function addAKw() {
-  if (!curSys) return;
-  const inp = document.getElementById('akI'); const kw = inp.value.trim(); if (!kw) return;
-  const d = D[curSys]; if (!d.alertKw.includes(kw)) { d.alertKw.push(kw); ls(sk(curSys,'akw'),d.alertKw); }
-  inp.value = ''; rKw();
-}
-
-function rmAKw(i) { if (!curSys) return; const d = D[curSys]; d.alertKw.splice(i,1); ls(sk(curSys,'akw'),d.alertKw); rKw(); }
-
-// === REPORTS ===
-function rRp() { if (!curSys) return; document.getElementById('rpD').value = new Date().toISOString().split('T')[0]; }
-
-async function genRpt(type) {
-  if (!curSys) return;
-  const d = D[curSys], sys = SYS[curSys];
-  const date = document.getElementById('rpD').value;
-  const useAI = document.getElementById('rpAI').checked;
-  const customPrompt = document.getElementById('rpPrompt').value.trim();
-  // Save prompt
-  d.aiPrompt = customPrompt;
-  ls(sk(curSys,'aiprompt'), d.aiPrompt);
-
-  const start = new Date(date);
-  const end = new Date(date);
-  if (type === 'weekly') start.setDate(start.getDate() - 7);
-  const items = d.items.filter(i => i.ts >= start.getTime() && i.ts <= end.getTime() + 86400000);
-  let rpt = '';
-  const label = type==='daily' ? date : `${start.toISOString().split('T')[0]} ~ ${date}`;
-  rpt += `${sys.name} - ${type==='daily'?'日报':'周报'}\n`;
-  rpt += `报告日期：${label}\n生成时间：${new Date().toLocaleString('zh-CN')}\n${'='.repeat(40)}\n\n`;
-  if (!items.length) {
-    rpt += '本期无监控数据。\n';
-  } else {
-    rpt += `本期共采集 ${items.length} 条，其中重要/告警 ${items.filter(i=>i.important).length} 条。\n\n`;
-    const groups = {};
-    items.forEach(i => { const c = i.cat||'默认'; if(!groups[c]) groups[c]=[]; groups[c].push(i); });
-    for (const [cat, ci] of Object.entries(groups)) {
-      rpt += `【${cat}】(${ci.length}条)\n`;
-      ci.slice(0,30).forEach(i => {
-        rpt += `  ${i.important?'[!]':' · '} [${new Date(i.ts).toLocaleString('zh-CN')}] ${i.source}: ${i.title}\n`;
-        if (i.url) rpt += `    ${i.url}\n`;
-      });
-      if (ci.length > 30) rpt += `  ...及其他 ${ci.length-30} 条\n`;
-      rpt += '\n';
-    }
-    if (useAI && items.length > 0) {
-      rpt += `${'='.repeat(40)}\nAI 摘要\n${'─'.repeat(30)}\n`;
-      try {
-        const txt = items.slice(0,30).map(i => `[${i.source}] ${i.title}`).join('\n');
-        let prompt = customPrompt || sys.defaultAIPrompt || '你是{sys}的数据分析师。请根据以下监控数据，生成{type}摘要。简明扼要，中文。\n';
-        prompt = prompt.replace(/\{sys\}/g, sys.name).replace(/\{type\}/g, type==='daily'?'日报':'周报');
-        prompt += '\n\n' + txt;
-        rpt += await callAI(prompt) + '\n';
-      } catch(e) { rpt += `AI摘要失败：${e.message}\n`; }
+  btn.style.opacity = '1';
+  toast(`全部刷新完成 (成功 ${totalOk} / 失败 ${totalFail})`, totalOk > 0 ? 'ok' : 'err');
+  renderPortal();
+  // Notify for alerts
+  if ('Notification' in window && Notification.permission === 'granted') {
+    for (const id of Object.keys(SYS)) {
+      const d = sysData[id];
+      const today = new Date(); today.setHours(0,0,0,0);
+      const alerts = d.items.filter(i => i.ts >= today.getTime() && i.important);
+      if (alerts.length > 0) {
+        try { new Notification(SYS[id].name, {body: `${alerts.length}条告警：${alerts[0].title.substring(0,50)}`}); } catch(e) {}
+      }
     }
   }
-  document.getElementById('rpV').textContent = rpt;
-  toast('报告已生成','ok');
 }
 
-// === AI CALL (unified, supports multiple providers) ===
-async function callAI(prompt) {
-  const aiCfg = lg('mon_ai_cfg', {});
-  const provider = aiCfg.provider || 'zhipu';
-  const preset = AI_PROVIDERS[provider] || AI_PROVIDERS.zhipu;
-  const url = aiCfg.url || preset.url;
-  const model = aiCfg.model || preset.model;
-  const key = aiCfg.key;
+function openGlobalSettings() {
+  document.getElementById('sModal').classList.add('on');
+  document.getElementById('sBody').innerHTML = renderSettingsBody(null, sysData);
+}
 
-  if (!key) throw new Error('未配置API Key，请在设置中配置');
-  if (!url) throw new Error('未配置API地址');
+function exportAllSystems() {
+  const data = {version: V, systems: {}};
+  for (const id of Object.keys(SYS)) {
+    const d = sysData[id];
+    data.systems[id] = {sources: d.sources, keywords: d.keywords, alertKw: d.alertKw, aiPrompt: d.aiPrompt, settings: d.cfg};
+  }
+  exportSettingsJSON(data, 'monitor_all_config.json');
+}
 
-  const r = await fetch(url, {
-    method:'POST',
-    headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
-    body:JSON.stringify({model, messages:[{role:'user',content:prompt}], temperature:0.7, max_tokens:1000})
+function importAllSystems() {
+  importJSON(data => {
+    if (data.systems) {
+      for (const [id, sd] of Object.entries(data.systems)) {
+        const d = sysData[id]; if (!d) continue;
+        if (sd.sources) { d.sources = sd.sources; ls(sk(id, 'src'), d.sources); }
+        if (sd.keywords) { d.keywords = sd.keywords; ls(sk(id, 'kw'), d.keywords); }
+        if (sd.alertKw) { d.alertKw = sd.alertKw; ls(sk(id, 'akw'), d.alertKw); }
+        if (sd.aiPrompt) { d.aiPrompt = sd.aiPrompt; ls(sk(id, 'aiprompt'), d.aiPrompt); }
+        if (sd.settings) { d.cfg = Object.assign(d.cfg, sd.settings); ls(sk(id, 'cfg'), d.cfg); }
+      }
+    }
+    toast('设置已导入', 'ok');
+    renderPortal();
   });
-  if (!r.ok) {
-    const errText = await r.text().catch(()=>'');
-    throw new Error('API ' + r.status + (errText ? ': ' + errText.substring(0,100) : ''));
-  }
-  const data = await r.json();
-  return data.choices?.[0]?.message?.content || '无摘要';
 }
 
-// === TEST AI CONNECTION ===
-async function testAI() {
-  const aiCfg = lg('mon_ai_cfg', {});
-  if (!aiCfg.key) { toast('请先填写API Key','err'); return; }
-  toast('正在测试AI连接...','');
-  try {
-    const result = await callAI('请用一句话介绍你自己。');
-    toast('AI连接成功: ' + result.substring(0,50), 'ok');
-  } catch(e) {
-    toast('AI连接失败: ' + e.message, 'err');
-  }
-}
-
-function cpRpt() { navigator.clipboard.writeText(document.getElementById('rpV').textContent).then(()=>toast('已复制','ok')).catch(()=>toast('复制失败','err')); }
-function dlRpt() {
-  if (!curSys) return;
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([document.getElementById('rpV').textContent],{type:'text/plain;charset=utf-8'}));
-  a.download = `monitor_${curSys}_${document.getElementById('rpD').value||'report'}.txt`; a.click();
-  toast('已下载','ok');
-}
-
-// === SETTINGS ===
-function openSettings() { document.getElementById('sModal').classList.add('on'); rStg(); }
-function closeStg() { document.getElementById('sModal').classList.remove('on'); }
-
-function rStg() {
-  const d = curSys ? D[curSys] : null;
-  const sn = curSys ? SYS[curSys].name : '全局';
-  const aiCfg = lg('mon_ai_cfg', {});
-  let h = '';
-
-  // AI Provider Settings (always shown)
-  h += `<div class="abt"><h3>AI 服务配置</h3></div>`;
-  h += `<div class="fg"><label class="fl">AI 服务商</label><select class="inp" id="aiProvider" onchange="onAIProviderChange()">`;
-  for (const [k, v] of Object.entries(AI_PROVIDERS)) {
-    h += `<option value="${k}" ${aiCfg.provider===k?'selected':''}>${v.name}</option>`;
-  }
-  h += `</select><div class="fh">选择AI服务商，首次使用已预填测试Key，可替换为自己的Key</div></div>`;
-  h += `<div class="fg"><label class="fl">API 地址</label><input class="inp" id="aiUrl" value="${esc(aiCfg.url||AI_PROVIDERS[aiCfg.provider||'zhipu'].url)}" placeholder="https://api.example.com/v1/chat/completions"><div class="fh">留空使用服务商默认地址</div></div>`;
-  h += `<div class="fg"><label class="fl">模型名称</label><input class="inp" id="aiModel" value="${esc(aiCfg.model||AI_PROVIDERS[aiCfg.provider||'zhipu'].model)}" placeholder="glm-4-flash"></div>`;
-  h += `<div class="fg"><label class="fl">API Key</label><input class="inp" type="password" id="aiKey" value="${esc(aiCfg.key||'')}" placeholder="输入你的API Key"><div class="fh">Key仅存储在浏览器本地，不会上传。首次使用已预填测试Key，建议替换为自己的Key</div></div>`;
-  h += `<div class="fg"><label class="fl">单条摘要提示词</label><textarea class="inp" id="aiSumPrompt" rows="2" placeholder="留空使用默认">${esc(aiCfg.summarizePrompt||'')}</textarea><div class="fh">用于时间线单条AI摘要</div></div>`;
-  h += `<div class="fg"><label class="fl">去重提示词</label><textarea class="inp" id="aiDedupPrompt" rows="2" placeholder="留空使用默认">${esc(aiCfg.dedupPrompt||'')}</textarea><div class="fh">用于AI智能去重，留空则不使用AI去重</div></div>`;
-  h += `<div style="display:flex;gap:var(--space-sm)"><button class="btn btn-p" onclick="saveAICfg()">保存AI配置</button><button class="btn btn-o" onclick="testAI()">测试连接</button></div>`;
-
-  // System-specific settings
-  if (d) {
-    const s = d.cfg;
-    h += `<div class="abt" style="margin-top:var(--space-xl)"><h3>当前系统：${SYS[curSys].icon} ${sn}</h3></div>`;
-    h += `<div class="fg"><label class="fl">自动刷新间隔（分钟）</label><input class="inp" type="number" value="${s.interval}" min="5" max="1440" onchange="updCfg('interval',+this.value)"><div class="fh">建议 5-60 分钟</div></div>`;
-    h += `<div class="fg"><label class="fl">自动刷新</label><label class="tog"><input type="checkbox" ${s.auto?'checked':''} onchange="updCfg('auto',this.checked)"><span class="tog-t"><span class="tog-k"></span></span><span>${s.auto?'开启':'关闭'}</span></label></div>`;
-    h += `<div class="fg"><label class="fl">浏览器通知</label><label class="tog"><input type="checkbox" ${s.notif?'checked':''} onchange="updCfg('notif',this.checked)"><span class="tog-t"><span class="tog-k"></span></span><span>${s.notif?'开启':'关闭'}</span></label></div>`;
-    h += `<div class="fg"><label class="fl">通知频率</label><select class="inp" onchange="updCfg('notifFreq',this.value)"><option value="realtime" ${s.notifFreq==='realtime'?'selected':''}>实时</option><option value="hourly" ${s.notifFreq==='hourly'?'selected':''}>每小时汇总</option><option value="daily" ${s.notifFreq==='daily'?'selected':''}>每日汇总</option></select></div>`;
-    h += `<div class="fg"><label class="fl">最大保留条数</label><input class="inp" type="number" value="${s.maxItems}" min="50" max="10000" onchange="updCfg('maxItems',+this.value)"></div>`;
-    h += `<div class="fg"><label class="fl">域名黑名单（每行一个）</label><textarea class="inp" rows="3" onchange="updCfg('blacklist',this.value)" placeholder="example.com">${esc(s.blacklist||'')}</textarea><div class="fh">黑名单域名的信息将不会采集</div></div>`;
-    h += `<div class="fg"><label class="fl">域名白名单（每行一个）</label><textarea class="inp" rows="3" onchange="updCfg('whitelist',this.value)" placeholder="example.com">${esc(s.whitelist||'')}</textarea><div class="fh">设置白名单后仅采集白名单域名，留空不过滤</div></div>`;
-    h += `<div class="fg"><label class="fl">每日报告时间</label><input class="inp" type="time" value="${s.reportTime||'18:00'}" onchange="updCfg('reportTime',this.value)"></div>`;
-    h += `<div style="margin:var(--space-lg) 0;display:flex;gap:var(--space-sm);flex-wrap:wrap"><button class="btn btn-o" onclick="expAll()">导出全部设置</button><button class="btn btn-o" onclick="impAll()">导入全部设置</button><button class="btn btn-d" onclick="if(confirm('确定清空当前系统所有数据？'))clrData()">清空当前系统数据</button></div>`;
-  }
-
-  // About
-  h += `<div class="abt" style="margin-top:var(--space-xl)"><h3>关于</h3>
-    <p>行业监控系统 是由 <strong>娱乐资本论</strong> 自主研发的全网内容实时巡检与自动化采集平台。系统支持 RSS 订阅、Google News 关键字订阅、网页变更轮询等多种信息获取方式，结合AI大模型实现智能摘要、去重和排序，自动生成日报/周报。</p>
-    <p style="margin-top:8px"><strong>核心功能：</strong></p>
-    <ul>
-      <li>RSS 信息源自动采集与解析</li>
-      <li>Google News 关键字 RSS 订阅（保底监控）</li>
-      <li>网页变更轮询检测（对比快照差异，支持广电总局/电影局等政务页面）</li>
-      <li>关键字过滤、高亮与告警</li>
-      <li>浏览器通知实时推送</li>
-      <li>AI 智能摘要与去重（支持智谱/DeepSeek/Gemini/自定义）</li>
-      <li>日报/周报自动生成与导出，支持自定义AI提示词</li>
-      <li>仪表盘大屏可视化（地图/饼图/柱图/折线图）</li>
-      <li>可打印输出（含监控链接与URL）</li>
-      <li>所有配置基于浏览器本地存储，支持导入导出</li>
-    </ul>
-    <p style="margin-top:8px"><strong>使用方法：</strong></p>
-    <ul>
-      <li>从首页选择对应的监控系统进入</li>
-      <li>在"信息源"页添加 RSS、Google News 或网页监控地址</li>
-      <li>在"关键字"页配置过滤和告警关键字</li>
-      <li>点击刷新或等待自动刷新采集数据</li>
-      <li>在"报告"页生成日报/周报，可自定义AI提示词</li>
-      <li>在设置中调整AI服务商、刷新频率、通知等参数</li>
-      <li>点击打印按钮可打印当前页面内容</li>
-    </ul>
-    <p style="margin-top:8px"><strong>部署方式：</strong>直接用浏览器打开 index.html、部署至 GitHub Pages 或 Cloudflare Workers 均可使用。</p>
-    <p style="margin-top:8px"><strong>知识产权：</strong>本系统全部知识产权归 <a href="https://ylzbl.com/" target="_blank">娱乐资本论</a> 所有。</p>
-    <p style="margin-top:12px"><strong>Changelog</strong></p>
-    <ul>
-      <li>v0.1 — 初始版本：5个子系统皮肤、RSS采集、页面轮询、关键字告警、AI摘要、报告生成</li>
-      <li>v0.2 — 修复默认信息源、修复toast通知、添加进度条、顺序抓取</li>
-      <li>v0.3 — 新增rss2json作为RSS解析备选方案</li>
-      <li>v0.4 — 修复去重逻辑、改进关键字匹配稳定性</li>
-      <li>v0.5 — 修复portal返回时数据不刷新、子系统进入时重新加载localStorage数据</li>
-      <li>v0.6 — 新增Google News关键字RSS订阅、仪表盘大屏可视化（世界地图/饼图/柱图/折线图）、自定义AI服务商（智谱/DeepSeek/Gemini/自定义）、自定义AI提示词、页面首次访问即返回内容、广电总局/电影局页面监控、可打印输出含URL、去除重复深色模式开关、AI连接测试、单条AI摘要</li>
-      <li>v0.7 — 关键字相关性过滤（通用RSS仅保留匹配关键字的内容）、修复AI Key预填、修复国家电影局URL、页面解析过滤ICP/版权/错误页等噪声内容、空Key自动填入测试Key</li>
-    </ul>
-  </div>`;
-  document.getElementById('sBody').innerHTML = h;
-}
-
-function onAIProviderChange() {
-  const provider = document.getElementById('aiProvider').value;
-  const preset = AI_PROVIDERS[provider];
-  document.getElementById('aiUrl').value = preset.url;
-  document.getElementById('aiModel').value = preset.model;
-}
-
-function saveAICfg() {
-  const cfg = {
-    provider: document.getElementById('aiProvider').value,
-    url: document.getElementById('aiUrl').value.trim(),
-    model: document.getElementById('aiModel').value.trim(),
-    key: document.getElementById('aiKey').value.trim(),
-    summarizePrompt: document.getElementById('aiSumPrompt').value,
-    dedupPrompt: document.getElementById('aiDedupPrompt').value
-  };
-  ls('mon_ai_cfg', cfg);
-  toast('AI配置已保存','ok');
-}
-
-function updCfg(k, v) {
-  if (!curSys) return;
-  const d = D[curSys]; d.cfg[k] = v; ls(sk(curSys,'cfg'), d.cfg);
-  if (k === 'auto' || k === 'interval') { clearInterval(rTimer); if (d.cfg.auto) rTimer = setInterval(() => refreshData(), d.cfg.interval * 60000); }
-}
-
-function expAll() {
-  if (!curSys) return;
-  const d = D[curSys];
-  const aiCfg = lg('mon_ai_cfg', {});
-  const json = JSON.stringify({version:V, system:curSys, sources:d.sources, keywords:d.keywords, alertKw:d.alertKw, aiPrompt:d.aiPrompt, settings:d.cfg, aiConfig:{provider:aiCfg.provider,url:aiCfg.url,model:aiCfg.model,summarizePrompt:aiCfg.summarizePrompt,dedupPrompt:aiCfg.dedupPrompt}}, null, 2);
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([json],{type:'application/json'}));
-  a.download = `monitor_${curSys}_config.json`; a.click();
-  toast('设置已导出','ok');
-}
-
-function impAll() {
-  if (!curSys) return;
-  const inp = document.createElement('input'); inp.type='file'; inp.accept='.json';
-  inp.onchange = e => {
-    const f = e.target.files[0]; if (!f) return;
-    const r = new FileReader();
-    r.onload = ev => {
-      try {
-        const data = JSON.parse(ev.target.result);
-        const d = D[curSys];
-        if (data.sources) { d.sources = data.sources; ls(sk(curSys,'src'),d.sources); }
-        if (data.keywords) { d.keywords = data.keywords; ls(sk(curSys,'kw'),d.keywords); }
-        if (data.alertKw) { d.alertKw = data.alertKw; ls(sk(curSys,'akw'),d.alertKw); }
-        if (data.aiPrompt) { d.aiPrompt = data.aiPrompt; ls(sk(curSys,'aiprompt'),d.aiPrompt); }
-        if (data.settings) { d.cfg = Object.assign(d.cfg, data.settings); ls(sk(curSys,'cfg'),d.cfg); }
-        if (data.aiConfig) {
-          const aiCfg = lg('mon_ai_cfg', {});
-          Object.assign(aiCfg, data.aiConfig);
-          ls('mon_ai_cfg', aiCfg);
-        }
-        rStg(); rSrc(); rKw(); rDash(); toast('设置已导入','ok');
-      } catch(e) { toast('导入失败','err'); }
-    };
-    r.readAsText(f);
-  };
-  inp.click();
-}
-
-function clrData() {
-  if (!curSys) return;
-  const d = D[curSys]; d.items = []; d.snaps = {};
-  ls(sk(curSys,'items'),[]); ls(sk(curSys,'snap'),{});
-  rDash(); rTl(); rStg(); toast('数据已清空');
-}
-
-// === HELPERS ===
-function fmtTime(ts) {
-  if (!ts) return '--:--';
-  return new Date(ts).toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
-}
-
-function esc(s) {
-  if (!s) return '';
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-function hlKw(text) {
-  if (!curSys) return text;
-  const d = D[curSys];
-  const allKw = [...d.keywords, ...d.alertKw].sort((a,b) => b.length - a.length);
-  let r = text;
-  allKw.forEach(kw => {
-    const re = new RegExp(kw.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'), 'gi');
-    r = r.replace(re, m => `<span class="kw-h">${m}</span>`);
-  });
-  return r;
-}
-
-// === START ===
 init();
 </script>
 </body>

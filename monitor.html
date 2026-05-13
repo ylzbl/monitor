@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>行业监控系统 | 娱乐资本论</title>
+<link rel="stylesheet" href="common.css">
+<style>
+/* Print-specific report styles */
+@media print{
+  .hdr,.ld-bar,.tc,.tabs,.tl-act,.btn,button,.mdl-o,.ds-charts,.wc-wrap,.no-print{display:none!important}
+  body{background:#fff!important;color:#000!important;font-size:11px!important}
+  .pg,.tp{display:block!important}
+  .card{border:1px solid #ccc!important;break-inside:avoid;page-break-inside:avoid}
+  a{color:#000!important;text-decoration:underline!important}
+  .tl-url{display:block!important}
+  .ds-c{border:1px solid #ccc!important}
+  .report-page{display:block!important}
+  .report-page h1{font-size:20px!important;border-bottom:2px solid #000;padding-bottom:8px;margin-bottom:16px}
+  .report-page .rp-meta{font-size:10px;color:#666;margin-bottom:12px}
+  .report-page table{width:100%;border-collapse:collapse;font-size:10px}
+  .report-page th,.report-page td{border:1px solid #999;padding:4px 6px;text-align:left}
+  .report-page th{background:#eee;font-weight:bold}
+  .report-page .rp-section{margin-bottom:16px}
+  .report-page .rp-section h2{font-size:14px;border-bottom:1px solid #999;padding-bottom:4px;margin-bottom:8px}
+}
+/* Report page (hidden on screen, visible on print) */
+.report-page{display:none}
+</style>
+</head>
+<body>
+<header class="hdr" id="hdr">
+  <div class="hdr-left">
+    <span class="hdr-brand" id="hBrand" onclick="location.href='index.html'">行业监控系统</span>
+    <span class="hdr-sub" id="hSub"></span>
+  </div>
+  <div class="hdr-right">
+    <button class="ibtn" onclick="toggleTheme()" title="切换主题"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/></svg></button>
+    <button class="ibtn" onclick="refreshData()" title="刷新数据" id="rfBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
+    <button class="ibtn" onclick="printReport()" title="打印报告"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
+    <button class="ibtn" onclick="openSettings()" title="设置"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+  </div>
+</header>
+<div class="ld-bar" id="ldBar"></div>
+<div class="tc" id="tc"></div>
+
+<div class="ctn">
+  <div class="tabs" id="sysTabs" style="margin-bottom:var(--space-lg)">
+    <button class="tab on" data-tab="dashboard" onclick="swTab(this)">仪表盘</button>
+    <button class="tab" data-tab="sources" onclick="swTab(this)">信息源</button>
+    <button class="tab" data-tab="timeline" onclick="swTab(this)">监控时间线</button>
+    <button class="tab" data-tab="keywords" onclick="swTab(this)">关键字</button>
+    <button class="tab" data-tab="reports" onclick="swTab(this)">报告</button>
+  </div>
+
+  <!-- Dashboard -->
+  <div class="tp on" id="pDash">
+    <div class="ds-g" id="dsStats"></div>
+    <div class="ds-charts" id="dsCharts">
+      <div class="ds-chart-card ds-map" id="dsMapCard">
+        <div class="ds-chart-title">信息源分布</div>
+        <div class="ds-chart-wrap" id="dsMap"></div>
+      </div>
+      <div class="ds-chart-card">
+        <div class="ds-chart-title">分类分布</div>
+        <div class="ds-chart-wrap" id="dsPie"></div>
+      </div>
+      <div class="ds-chart-card">
+        <div class="ds-chart-title">信息源采集量</div>
+        <div class="ds-chart-wrap" id="dsBar"></div>
+      </div>
+      <div class="ds-chart-card">
+        <div class="ds-chart-title">近期趋势</div>
+        <div class="ds-chart-wrap" id="dsLine"></div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:var(--space-lg)">
+      <div class="card-t">关键字词云</div>
+      <div class="wc-wrap" id="dsWordCloud"></div>
+    </div>
+    <div class="card">
+      <div class="card-t">最近监控动态</div>
+      <div id="dsRecent"></div>
+    </div>
+  </div>
+
+  <!-- Sources -->
+  <div class="tp" id="pSrc" style="display:none">
+    <div class="card" style="margin-bottom:var(--space-lg)">
+      <div class="card-t">添加信息源</div>
+      <div class="fr">
+        <div class="fg" style="flex:1"><label class="fl">名称</label><input class="inp" id="sN" placeholder="如：澎湃新闻"></div>
+        <div class="fg" style="flex:2"><label class="fl">URL</label><input class="inp" id="sU" placeholder="RSS地址或网页URL"></div>
+        <div class="fg" style="width:120px"><label class="fl">类型</label><select class="inp" id="sT"><option value="rss">RSS</option><option value="page">页面轮询</option></select></div>
+        <div class="fg" style="width:120px"><label class="fl">分类</label><input class="inp" id="sC" placeholder="默认"></div>
+        <button class="btn btn-p" onclick="addSrc()" style="margin-bottom:0;align-self:flex-end;height:38px">添加</button>
+      </div>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-sm)">
+        <div class="card-t" style="margin:0">已配置信息源</div>
+        <div style="display:flex;gap:var(--space-sm)"><button class="btn btn-sm btn-o" onclick="impSrc()">导入</button><button class="btn btn-sm btn-o" onclick="expSrc()">导出</button></div>
+      </div>
+      <div id="srcList"></div>
+    </div>
+  </div>
+
+  <!-- Timeline -->
+  <div class="tp" id="pTl" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-md)">
+      <div style="display:flex;gap:var(--space-sm);align-items:center">
+        <input class="inp" id="tlS" placeholder="搜索标题..." style="width:250px" oninput="rTl()">
+        <select class="inp" id="tlF" style="width:120px" onchange="rTl()"><option value="">全部</option></select>
+      </div>
+      <button class="btn btn-sm btn-p" onclick="refreshData()">立即刷新</button>
+    </div>
+    <div class="tl" id="tlList"></div>
+  </div>
+
+  <!-- Keywords -->
+  <div class="tp" id="pKw" style="display:none">
+    <div class="card" style="margin-bottom:var(--space-lg)">
+      <div class="card-t">关键字管理</div>
+      <p class="fh" style="margin-bottom:var(--space-md)">关键字用于过滤、高亮和告警。</p>
+      <div class="fr"><input class="inp" id="kwI" placeholder="输入关键字后回车" style="flex:1" onkeydown="if(event.key==='Enter')addKw()"><button class="btn btn-p" onclick="addKw()">添加</button></div>
+      <div id="kwL" style="margin-top:var(--space-md);display:flex;flex-wrap:wrap;gap:var(--space-sm)"></div>
+    </div>
+    <div class="card">
+      <div class="card-t">告警关键字</div>
+      <div class="fr"><input class="inp" id="akI" placeholder="输入告警关键字" style="flex:1" onkeydown="if(event.key==='Enter')addAKw()"><button class="btn btn-d btn-sm" onclick="addAKw()">添加告警词</button></div>
+      <div id="akL" style="margin-top:var(--space-md);display:flex;flex-wrap:wrap;gap:var(--space-sm)"></div>
+    </div>
+  </div>
+
+  <!-- Reports -->
+  <div class="tp" id="pRp" style="display:none">
+    <div class="card" style="margin-bottom:var(--space-lg)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-md)">
+        <div class="card-t" style="margin:0">生成报告</div>
+        <div style="display:flex;gap:var(--space-sm)"><button class="btn btn-p" onclick="genRpt('daily')">生成日报</button><button class="btn btn-o" onclick="genRpt('weekly')">生成周报</button></div>
+      </div>
+      <div class="fr" style="margin-bottom:var(--space-md)">
+        <div class="fg" style="flex:1"><label class="fl">报告日期</label><input class="inp" type="date" id="rpD"></div>
+        <div class="fg" style="flex:1"><label class="fl">使用AI总结</label><label class="tog"><input type="checkbox" id="rpAI" checked><span class="tog-t"><span class="tog-k"></span></span><span>AI摘要</span></label></div>
+      </div>
+      <div class="fg"><label class="fl">AI摘要提示词（可自定义）</label><textarea class="inp" id="rpPrompt" rows="3" placeholder="留空使用默认"></textarea></div>
+    </div>
+    <div class="card">
+      <div class="card-t">报告预览</div>
+      <div class="rp" id="rpV">尚未生成报告。</div>
+      <div style="margin-top:var(--space-md);display:flex;gap:var(--space-sm)">
+        <button class="btn btn-sm btn-o" onclick="cpRpt()">复制文本</button>
+        <button class="btn btn-sm btn-o" onclick="dlRpt()">下载TXT</button>
+        <button class="btn btn-sm btn-p" onclick="printReport()">打印报告</button>
+        <button class="btn btn-sm btn-o" onclick="exportCSV(sysData[curSys].items,'monitor_'+curSys+'_items.csv')">导出CSV</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Print Report Template (hidden on screen) -->
+<div class="report-page" id="printReport">
+  <h1 id="prTitle"></h1>
+  <div class="rp-meta" id="prMeta"></div>
+  <div id="prContent"></div>
+</div>
+
+<!-- Settings Modal -->
+<div class="mdl-o" id="sModal">
+  <div class="mdl">
+    <div class="mdl-h"><span class="mdl-t">系统设置</span><button class="mdl-x" onclick="document.getElementById('sModal').classList.remove('on')">&times;</button></div>
+    <div class="mdl-b" id="sBody"></div>
+  </div>
+</div>
+
+<script src="common.js"></script>
+<script>
+let curSys = null;
+let sysData = {};
+let rTimer = null;
+
+function init() {
+  initGlobalConfig();
+  for (const id of Object.keys(SYS)) sysData[id] = initSysData(id);
+  const h = location.hash.slice(1);
+  if (h && SYS[h]) enterSys(h); else location.href = 'index.html';
+  window.addEventListener('hashchange', () => { const h2 = location.hash.slice(1); if (h2 && SYS[h2]) enterSys(h2); });
+}
+
+function enterSys(id) {
+  curSys = id;
+  const sys = SYS[id], d = sysData[id];
+  d.items = lg(sk(id,'items'), d.items);
+  d.sources = lg(sk(id,'src'), d.sources);
+  d.keywords = lg(sk(id,'kw'), d.keywords);
+  d.alertKw = lg(sk(id,'akw'), d.alertKw);
+  d.aiPrompt = lg(sk(id,'aiprompt'), d.aiPrompt);
+  d.cfg = Object.assign({interval:30,auto:true,notif:true,maxItems:500,blacklist:'',whitelist:'',notifFreq:'realtime',reportTime:'18:00'}, lg(sk(id,'cfg'), {}));
+  document.documentElement.setAttribute('data-sys', id);
+  document.getElementById('hBrand').textContent = sys.icon + ' ' + sys.name;
+  document.getElementById('hSub').textContent = '行业监控系统';
+  document.title = sys.name + ' | 行业监控系统';
+  document.querySelectorAll('#sysTabs .tab').forEach((t,i) => t.classList.toggle('on', i===0));
+  document.querySelectorAll('.tp').forEach((p,i) => p.style.display = i===0?'block':'none');
+  rDash(); rSrc(); rTl(); rKw(); rRp(); rCharts();
+  clearInterval(rTimer);
+  if (d.cfg.auto) rTimer = setInterval(() => refreshData(), d.cfg.interval * 60000);
+  // Auto-refresh on first enter
+  setTimeout(() => refreshData(), 500);
+}
+
+function swTab(btn) {
+  const t = btn.dataset.tab;
+  document.querySelectorAll('#sysTabs .tab').forEach(x => x.classList.remove('on'));
+  btn.classList.add('on');
+  const map = {dashboard:'pDash',sources:'pSrc',timeline:'pTl',keywords:'pKw',reports:'pRp'};
+  Object.values(map).forEach(id => document.getElementById(id).style.display = 'none');
+  document.getElementById(map[t]).style.display = 'block';
+  if (t === 'dashboard') rCharts();
+}
+
+async function refreshData() {
+  if (!curSys) return;
+  const d = sysData[curSys];
+  if (d.loading) return;
+  d.loading = true; ldBar(10);
+  const btn = document.getElementById('rfBtn'); btn.style.opacity = '0.5';
+  const enabled = d.sources.filter(s => s.enabled);
+  let newItems = [], ok = 0, fail = 0;
+  for (let i = 0; i < enabled.length; i++) {
+    const src = enabled[i]; ldBar(10 + 80 * (i / enabled.length));
+    try {
+      let items = [];
+      if (src.type === 'rss') {
+        try { const ctrl = new AbortController(); const tid = setTimeout(() => ctrl.abort(), 12000); const resp = await fetch(RSS2JSON + encodeURIComponent(src.url), {signal:ctrl.signal}); clearTimeout(tid); if (resp.ok) { const data = await resp.json(); if (data.status === 'ok' && data.items?.length) items = parseRSS2JSON(data, src); } } catch(e) {}
+        if (!items.length) { try { const xml = await fetchProxy(src.url); items = parseRSS(xml, src); } catch(e) {} }
+        items.length ? ok++ : fail++;
+      } else {
+        try { const html = await fetchProxy(src.url); const oldSnap = d.snaps[src.id] || null; items = parsePage(html, src, oldSnap); d.snaps[src.id] = html; ls(sk(curSys,'snap'), d.snaps); ok++; } catch(e) { fail++; }
+      }
+      newItems.push(...items);
+    } catch(e) { fail++; }
+  }
+  ldBar(95);
+  // Dedup
+  const seen = new Set();
+  const deduped = newItems.filter(i => { const key = i.url + '|' + i.title; if (seen.has(key)) return false; seen.add(key); return true; });
+  const existIds = new Set(d.items.map(i => i.url + '|' + i.title));
+  let unique = deduped.filter(i => !existIds.has(i.url + '|' + i.title));
+  // Relevance filter
+  const allKw = [...d.keywords, ...d.alertKw].map(k => k.toLowerCase());
+  const relevanceFiltered = unique.filter(item => {
+    if (item.type === 'page') return true;
+    const txt = (item.title || '').toLowerCase();
+    return allKw.some(kw => txt.includes(kw));
+  });
+  if (relevanceFiltered.length > 0) unique = relevanceFiltered;
+  // Keyword match
+  unique.forEach(item => { const txt = (item.title||'').toLowerCase(); allKw.forEach(kw => { if (txt.includes(kw)) item.important = true; }); });
+  d.items = [...unique, ...d.items].slice(0, d.cfg.maxItems);
+  ls(sk(curSys,'items'), d.items);
+  // Notify
+  if (d.cfg.notif && unique.length > 0) {
+    const alerts = unique.filter(i => { const txt = (i.title||'').toLowerCase(); return d.alertKw.some(k => txt.includes(k.toLowerCase())); });
+    if (alerts.length > 0 && 'Notification' in window && Notification.permission === 'granted') {
+      try { new Notification(SYS[curSys].name + ' - 告警', {body: `${alerts.length}条告警：${alerts[0].title.substring(0,50)}`}); } catch(e) {}
+    }
+  }
+  d.loading = false; btn.style.opacity = '1'; ldBar(100);
+  toast(unique.length > 0 ? `新增 ${unique.length} 条 (成功 ${ok}/${enabled.length})` : `已刷新 (成功 ${ok}/${enabled.length})`, ok > 0 ? 'ok' : 'err');
+  rDash(); rTl(); rCharts();
+}
+
+// === DASHBOARD ===
+function rDash() {
+  if (!curSys) return;
+  const d = sysData[curSys];
+  const en = d.sources.filter(s=>s.enabled).length;
+  const total = d.items.length;
+  const imp = d.items.filter(i=>i.important).length;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const todayN = d.items.filter(i => i.ts >= today.getTime()).length;
+  const unread = d.items.filter(i => !i.read).length;
+  document.getElementById('dsStats').innerHTML = `
+    <div class="ds-c"><div class="ds-l">活跃信息源</div><div class="ds-v">${en}</div><div class="ds-s">共 ${d.sources.length} 个</div></div>
+    <div class="ds-c"><div class="ds-l">今日新增</div><div class="ds-v">${todayN}</div><div class="ds-s">总计 ${total}</div></div>
+    <div class="ds-c"><div class="ds-l">重要/告警</div><div class="ds-v">${imp}</div><div class="ds-s">需关注</div></div>
+    <div class="ds-c"><div class="ds-l">未读</div><div class="ds-v">${unread}</div><div class="ds-s">关键字 ${d.keywords.length}</div></div>`;
+  const recent = d.items.slice(0, 10);
+  if (!recent.length) {
+    document.getElementById('dsRecent').innerHTML = '<div class="emp"><div class="emp-i">📭</div><div class="emp-t">暂无监控数据</div><button class="btn btn-p" onclick="refreshData()">立即采集</button></div>';
+  } else {
+    document.getElementById('dsRecent').innerHTML = recent.map(i => `
+      <div style="padding:var(--space-sm) 0;border-bottom:1px solid var(--border);display:flex;gap:var(--space-sm);align-items:baseline;flex-wrap:wrap">
+        <span style="font-family:var(--font-mono);font-size:var(--font-xs);color:var(--text-muted);flex-shrink:0">${fmtTime(i.ts)}</span>
+        <span class="bdg ${i.important?'bdg-a':'bdg-m'}" style="flex-shrink:0">${esc(i.source)}</span>
+        <a href="${esc(i.url)}" target="_blank" style="font-size:var(--font-sm);color:var(--text)">${hlKw(esc(i.title),[...d.keywords,...d.alertKw])}</a>
+      </div>`).join('');
+  }
+  // Word cloud
+  const kwCounts = {};
+  d.keywords.forEach(kw => { kwCounts[kw] = d.items.filter(i => (i.title||'').toLowerCase().includes(kw.toLowerCase())).length; });
+  const sortedKw = Object.entries(kwCounts).sort((a,b) => b[1]-a[1]).slice(0,20);
+  renderWordCloud(document.getElementById('dsWordCloud'), sortedKw.map(e=>e[0]), sortedKw.map(e=>e[1]));
+}
+
+function rCharts() {
+  if (!curSys) return;
+  const d = sysData[curSys];
+  // World map - load SVG
+  fetch('world-map.svg').then(r=>r.text()).then(svg=>{
+    const wrap=document.getElementById('dsMap');
+    // Add dots for source categories
+    const cats={};d.sources.forEach(s=>{cats[s.category||'默认']=(cats[s.category||'默认']||0)+1});
+    const positions=[{x:480,y:100},{x:200,y:80},{x:380,y:120},{x:550,y:140},{x:300,y:160},{x:450,y:180},{x:250,y:130}];
+    let dots='';Object.entries(cats).forEach(([cat,count],i)=>{
+      const pos=positions[i%positions.length];const r=Math.max(6,Math.min(18,count*4));
+      dots+=`<circle cx="${pos.x}" cy="${pos.y}" r="${r}" fill="var(--accent)" opacity="0.6"><title>${esc(cat)}: ${count}个</title><animate attributeName="r" values="${r};${r+2};${r}" dur="3s" repeatCount="indefinite"/></circle>`;
+    });
+    wrap.innerHTML=svg.replace('</svg>',dots+'</svg>');
+    wrap.querySelector('svg').style.fill='var(--text-muted)';wrap.querySelector('svg').style.opacity='0.3';
+  }).catch(()=>{document.getElementById('dsMap').innerHTML='<div style="text-align:center;color:var(--text-muted)">地图加载失败</div>'});
+  // Pie
+  const cats={};d.items.forEach(i=>{cats[i.cat||'默认']=(cats[i.cat||'默认']||0)+1});
+  renderPieChart(document.getElementById('dsPie'),cats);
+  // Bar
+  const srcCount={};d.items.forEach(i=>{srcCount[i.source]=(srcCount[i.source]||0)+1});
+  renderBarChart(document.getElementById('dsBar'),srcCount);
+  // Line
+  renderLineChart(document.getElementById('dsLine'),get7DayData(d.items));
+}
+
+// === SOURCES ===
+function rSrc() {
+  if (!curSys) return;const d=sysData[curSys];
+  if (!d.sources.length){document.getElementById('srcList').innerHTML='<div class="emp"><div class="emp-i">📡</div><div class="emp-t">暂无信息源</div></div>';return}
+  document.getElementById('srcList').innerHTML = d.sources.map(s=>`<div class="si">
+    <label class="tog" style="flex-shrink:0"><input type="checkbox" ${s.enabled?'checked':''} onchange="togSrc('${s.id}',this.checked)"><span class="tog-t"><span class="tog-k"></span></span></label>
+    <span class="si-n" title="${esc(s.name)}">${esc(s.name)}</span><span class="si-t">${s.type.toUpperCase()}</span>
+    <span class="si-u" title="${esc(s.url)}">${esc(s.url)}</span><span class="bdg bdg-m">${esc(s.category||'默认')}</span>
+    <button class="btn btn-sm btn-g" onclick="rmSrc('${s.id}')" style="color:var(--err)">删除</button></div>`).join('');
+  const cats=[...new Set(d.sources.map(s=>s.category||'默认'))];const sel=document.getElementById('tlF');const cv=sel.value;
+  sel.innerHTML='<option value="">全部</option>'+cats.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');sel.value=cv;
+}
+function addSrc(){if(!curSys)return;const n=document.getElementById('sN').value.trim(),u=document.getElementById('sU').value.trim(),t=document.getElementById('sT').value,c=document.getElementById('sC').value.trim()||'默认';if(!n||!u){toast('请填写名称和URL','err');return}if(isBlocked(u)){toast('该源被合规过滤屏蔽','err');return}const d=sysData[curSys];d.sources.push({id:curSys+'_s_'+Date.now(),name:n,url:u,type:t,category:c,enabled:true});ls(sk(curSys,'src'),d.sources);document.getElementById('sN').value='';document.getElementById('sU').value='';document.getElementById('sC').value='';rSrc();toast('信息源已添加','ok')}
+function rmSrc(id){if(!curSys)return;const d=sysData[curSys];d.sources=d.sources.filter(s=>s.id!==id);ls(sk(curSys,'src'),d.sources);rSrc();toast('信息源已删除')}
+function togSrc(id,en){if(!curSys)return;const d=sysData[curSys];const s=d.sources.find(s=>s.id===id);if(s)s.enabled=en;ls(sk(curSys,'src'),d.sources);rDash()}
+function impSrc(){if(!curSys)return;importJSON(data=>{const arr=Array.isArray(data)?data:(data.sources||[]);const d=sysData[curSys];arr.forEach(s=>{if(s.url&&s.name&&!isBlocked(s.url))d.sources.push({...s,id:s.id||curSys+'_s_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),enabled:s.enabled!==false,type:s.type||'rss',category:s.category||'导入'})});ls(sk(curSys,'src'),d.sources);rSrc();toast('导入成功','ok')})}
+function expSrc(){if(!curSys)return;exportSettingsJSON(sysData[curSys].sources,`monitor_${curSys}_sources.json`)}
+
+// === TIMELINE ===
+function rTl(){if(!curSys)return;const d=sysData[curSys];const search=(document.getElementById('tlS')?.value||'').toLowerCase();const filter=document.getElementById('tlF')?.value||'';let items=d.items;if(search)items=items.filter(i=>(i.title||'').toLowerCase().includes(search)||(i.source||'').toLowerCase().includes(search));if(filter)items=items.filter(i=>(i.cat||'')===filter);if(!items.length){document.getElementById('tlList').innerHTML='<div class="emp"><div class="emp-i">📭</div><div class="emp-t">暂无监控数据</div><button class="btn btn-p" onclick="refreshData()">立即采集</button></div>';return}document.getElementById('tlList').innerHTML=items.slice(0,100).map(i=>`<div class="tl-i ${i.important?'imp':''}"><div><span class="tl-tm">${fmtTime(i.ts)}</span><span class="tl-src">${esc(i.source)}</span><span class="tl-tag">${esc(i.cat||'默认')}</span></div><div class="tl-tt"><a href="${esc(i.url)}" target="_blank">${hlKw(esc(i.title),[...d.keywords,...d.alertKw])}</a></div><div class="tl-url">${esc(i.url)}</div><div class="tl-act"><button class="btn btn-sm btn-g" onclick="mkRead('${esc(i.id)}')">${i.read?'已读':'标为已读'}</button><button class="btn btn-sm btn-g" onclick="aiSumItem('${esc(i.id)}')">AI摘要</button><button class="btn btn-sm btn-g" onclick="rmItem('${esc(i.id)}')">删除</button></div></div>`).join('')}
+function mkRead(id){if(!curSys)return;const d=sysData[curSys];const i=d.items.find(x=>x.id===id);if(i){i.read=true;ls(sk(curSys,'items'),d.items);rTl()}}
+function rmItem(id){if(!curSys)return;const d=sysData[curSys];d.items=d.items.filter(x=>x.id!==id);ls(sk(curSys,'items'),d.items);rTl();rDash()}
+async function aiSumItem(id){if(!curSys)return;const d=sysData[curSys];const item=d.items.find(x=>x.id===id);if(!item)return;const aiCfg=lg('mon_ai',{});if(!aiCfg.key){toast('请先在设置中配置AI API Key','err');return}toast('正在生成AI摘要...','');try{const prompt=(aiCfg.summarizePrompt||'请用中文简要概括以下新闻的核心内容，不超过100字：\n')+item.title+'\n'+item.url;const result=await callAI(prompt);const el=document.createElement('div');el.className='mdl-o on';el.innerHTML=`<div class="mdl"><div class="mdl-h"><span class="mdl-t">AI摘要</span><button class="mdl-x" onclick="this.closest('.mdl-o').remove()">&times;</button></div><div class="mdl-b"><p style="font-size:var(--font-sm);line-height:1.8">${esc(result)}</p></div></div>`;document.body.appendChild(el);el.addEventListener('click',e=>{if(e.target===el)el.remove()})}catch(e){toast('AI摘要失败: '+e.message,'err')}}
+
+// === KEYWORDS ===
+function rKw(){if(!curSys)return;const d=sysData[curSys];document.getElementById('kwL').innerHTML=d.keywords.map((kw,i)=>`<span class="bdg bdg-l" style="cursor:pointer" onclick="rmKw(${i})">${esc(kw)} &times;</span>`).join('');document.getElementById('akL').innerHTML=d.alertKw.map((kw,i)=>`<span class="bdg bdg-a" style="cursor:pointer" onclick="rmAKw(${i})">${esc(kw)} &times;</span>`).join('');document.getElementById('rpPrompt').value=d.aiPrompt||''}
+function addKw(){if(!curSys)return;const inp=document.getElementById('kwI');const kw=inp.value.trim();if(!kw)return;const d=sysData[curSys];if(!d.keywords.includes(kw)){d.keywords.push(kw);ls(sk(curSys,'kw'),d.keywords)}inp.value='';rKw()}
+function rmKw(i){if(!curSys)return;const d=sysData[curSys];d.keywords.splice(i,1);ls(sk(curSys,'kw'),d.keywords);rKw()}
+function addAKw(){if(!curSys)return;const inp=document.getElementById('akI');const kw=inp.value.trim();if(!kw)return;const d=sysData[curSys];if(!d.alertKw.includes(kw)){d.alertKw.push(kw);ls(sk(curSys,'akw'),d.alertKw)}inp.value='';rKw()}
+function rmAKw(i){if(!curSys)return;const d=sysData[curSys];d.alertKw.splice(i,1);ls(sk(curSys,'akw'),d.alertKw);rKw()}
+
+// === REPORTS ===
+function rRp(){if(!curSys)return;document.getElementById('rpD').value=new Date().toISOString().split('T')[0]}
+async function genRpt(type){if(!curSys)return;const d=sysData[curSys],sys=SYS[curSys];const date=document.getElementById('rpD').value;const useAI=document.getElementById('rpAI').checked;const customPrompt=document.getElementById('rpPrompt').value.trim();d.aiPrompt=customPrompt;ls(sk(curSys,'aiprompt'),d.aiPrompt);const start=new Date(date);const end=new Date(date);if(type==='weekly')start.setDate(start.getDate()-7);const items=d.items.filter(i=>i.ts>=start.getTime()&&i.ts<=end.getTime()+86400000);let rpt='';const label=type==='daily'?date:`${start.toISOString().split('T')[0]} ~ ${date}`;rpt+=`${sys.name} - ${type==='daily'?'日报':'周报'}\n报告日期：${label}\n生成时间：${new Date().toLocaleString('zh-CN')}\n${'='.repeat(40)}\n\n`;if(!items.length){rpt+='本期无监控数据。\n'}else{rpt+=`本期共采集 ${items.length} 条，其中重要/告警 ${items.filter(i=>i.important).length} 条。\n\n`;const groups={};items.forEach(i=>{const c=i.cat||'默认';if(!groups[c])groups[c]=[];groups[c].push(i)});for(const[cat,ci]of Object.entries(groups)){rpt+=`【${cat}】(${ci.length}条)\n`;ci.slice(0,30).forEach(i=>{rpt+=`  ${i.important?'[!]':' · '} [${new Date(i.ts).toLocaleString('zh-CN')}] ${i.source}: ${i.title}\n    ${i.url}\n`});if(ci.length>30)rpt+=`  ...及其他 ${ci.length-30} 条\n`;rpt+='\n'}if(useAI&&items.length>0){rpt+=`${'='.repeat(40)}\nAI 摘要\n${'─'.repeat(30)}\n`;try{const txt=items.slice(0,30).map(i=>`[${i.source}] ${i.title}`).join('\n');let prompt=customPrompt||sys.defaultAIPrompt||'你是{sys}的数据分析师。请根据监控数据生成{type}摘要。简明扼要，中文。\n';prompt=prompt.replace(/\{sys\}/g,sys.name).replace(/\{type\}/g,type==='daily'?'日报':'周报');prompt+='\n\n'+txt;rpt+=await callAI(prompt)+'\n'}catch(e){rpt+=`AI摘要失败：${e.message}\n`}}}document.getElementById('rpV').textContent=rpt;toast('报告已生成','ok')}
+function cpRpt(){navigator.clipboard.writeText(document.getElementById('rpV').textContent).then(()=>toast('已复制','ok')).catch(()=>toast('复制失败','err'))}
+function dlRpt(){if(!curSys)return;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([document.getElementById('rpV').textContent],{type:'text/plain;charset=utf-8'}));a.download=`monitor_${curSys}_${document.getElementById('rpD').value||'report'}.txt`;a.click();toast('已下载','ok')}
+
+// === PRINT REPORT ===
+function printReport(){
+  if(!curSys)return;const d=sysData[curSys],sys=SYS[curSys];
+  const today=new Date().toLocaleDateString('zh-CN');
+  const items=d.items.slice(0,50);
+  // Build print content
+  const prTitle=document.getElementById('prTitle');
+  const prMeta=document.getElementById('prMeta');
+  const prContent=document.getElementById('prContent');
+  prTitle.textContent=sys.name+' 监控报告';
+  prMeta.innerHTML=`报告日期：${today} | 生成时间：${new Date().toLocaleString('zh-CN')} | 娱乐资本论`;
+  // Stats summary
+  const en=d.sources.filter(s=>s.enabled).length;const imp=items.filter(i=>i.important).length;
+  let html=`<div class="rp-section"><h2>概要</h2><table><tr><th>指标</th><th>数值</th></tr><tr><td>活跃信息源</td><td>${en}</td></tr><tr><td>监控条目</td><td>${items.length}</td></tr><tr><td>重要/告警</td><td>${imp}</td></tr></table></div>`;
+  // Items by category
+  const groups={};items.forEach(i=>{const c=i.cat||'默认';if(!groups[c])groups[c]=[];groups[c].push(i)});
+  for(const[cat,ci]of Object.entries(groups)){
+    html+=`<div class="rp-section"><h2>${esc(cat)} (${ci.length}条)</h2><table><tr><th>时间</th><th>来源</th><th>标题</th><th>URL</th></tr>`;
+    ci.slice(0,20).forEach(i=>{html+=`<tr><td>${fmtTime(i.ts)}</td><td>${esc(i.source)}</td><td>${esc(i.title)}</td><td style="font-size:9px;word-break:break-all">${esc(i.url)}</td></tr>`});
+    html+=`</table></div>`;
+  }
+  prContent.innerHTML=html;
+  window.print();
+}
+
+// === SETTINGS ===
+function openSettings(){document.getElementById('sModal').classList.add('on');document.getElementById('sBody').innerHTML=renderSettingsBody(curSys,sysData)}
+function updCfg(k,v){if(!curSys)return;const d=sysData[curSys];d.cfg[k]=v;ls(sk(curSys,'cfg'),d.cfg);if(k==='auto'||k==='interval'){clearInterval(rTimer);if(d.cfg.auto)rTimer=setInterval(()=>refreshData(),d.cfg.interval*60000)}}
+function expAllSettings(){if(!curSys)return;const d=sysData[curSys];exportSettingsJSON({version:V,system:curSys,sources:d.sources,keywords:d.keywords,alertKw:d.alertKw,aiPrompt:d.aiPrompt,settings:d.cfg},`monitor_${curSys}_config.json`)}
+function impAllSettings(){if(!curSys)return;importJSON(data=>{const d=sysData[curSys];if(data.sources){d.sources=data.sources;ls(sk(curSys,'src'),d.sources)}if(data.keywords){d.keywords=data.keywords;ls(sk(curSys,'kw'),d.keywords)}if(data.alertKw){d.alertKw=data.alertKw;ls(sk(curSys,'akw'),d.alertKw)}if(data.aiPrompt){d.aiPrompt=data.aiPrompt;ls(sk(curSys,'aiprompt'),d.aiPrompt)}if(data.settings){d.cfg=Object.assign(d.cfg,data.settings);ls(sk(curSys,'cfg'),d.cfg)}toast('设置已导入','ok');rSrc();rKw();rDash()})}
+function clrData(){if(!curSys)return;const d=sysData[curSys];d.items=[];d.snaps={};ls(sk(curSys,'items'),[]);ls(sk(curSys,'snap'),{});rDash();rTl();toast('数据已清空')}
+
+init();
+</script>
+</body>
+</html>
