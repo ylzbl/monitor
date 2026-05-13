@@ -402,11 +402,11 @@ td{border-bottom:1px solid var(--border)}tr:hover td{background:var(--accent-lig
 
 <script>
 /* ============================================================
-   行业监控系统 v0.6  —  娱乐资本论
+   行业监控系统 v0.7  —  娱乐资本论
    全网内容实时巡检与自动化采集平台
    ============================================================ */
 
-const V = '0.6';
+const V = '0.7';
 
 // === SUBSYSTEM DEFINITIONS ===
 const SYS = {
@@ -862,12 +862,24 @@ async function refreshData() {
     } catch(e) { /* fallback to no AI dedup */ }
   }
 
-  // Keyword match
+  // Keyword match + relevance filtering
   const allKw = [...d.keywords, ...d.alertKw];
   finalItems.forEach(item => {
     const txt = (item.title||'').toLowerCase();
     allKw.forEach(kw => { if (txt.includes(kw.toLowerCase())) item.important = true; });
   });
+  // Filter for relevance: keep items that match at least one keyword OR are from page/gnews sources
+  // This reduces noise from generic RSS feeds
+  const kwLower = allKw.map(k => k.toLowerCase());
+  const relevanceFiltered = finalItems.filter(item => {
+    // Always keep items from page monitoring and Google News (they're already keyword-targeted)
+    if (item.type === 'page' || item.type === 'gnews') return true;
+    // For generic RSS, only keep if matches at least one keyword
+    const txt = (item.title||'').toLowerCase();
+    return kwLower.some(kw => txt.includes(kw));
+  });
+  // If filtering removes everything, keep original (safety)
+  if (relevanceFiltered.length > 0) finalItems = relevanceFiltered;
 
   // Merge & trim
   d.items = [...finalItems, ...d.items].slice(0, d.cfg.maxItems);
@@ -1338,7 +1350,7 @@ function rStg() {
   for (const [k, v] of Object.entries(AI_PROVIDERS)) {
     h += `<option value="${k}" ${aiCfg.provider===k?'selected':''}>${v.name}</option>`;
   }
-  h += `</select><div class="fh">选择AI服务商，API Key需自行填写，系统不存储预设Key</div></div>`;
+  h += `</select><div class="fh">选择AI服务商，首次使用已预填测试Key，可替换为自己的Key</div></div>`;
   h += `<div class="fg"><label class="fl">API 地址</label><input class="inp" id="aiUrl" value="${esc(aiCfg.url||AI_PROVIDERS[aiCfg.provider||'zhipu'].url)}" placeholder="https://api.example.com/v1/chat/completions"><div class="fh">留空使用服务商默认地址</div></div>`;
   h += `<div class="fg"><label class="fl">模型名称</label><input class="inp" id="aiModel" value="${esc(aiCfg.model||AI_PROVIDERS[aiCfg.provider||'zhipu'].model)}" placeholder="glm-4-flash"></div>`;
   h += `<div class="fg"><label class="fl">API Key</label><input class="inp" type="password" id="aiKey" value="${esc(aiCfg.key||'')}" placeholder="输入你的API Key"><div class="fh">Key仅存储在浏览器本地，不会上传。首次使用已预填测试Key，建议替换为自己的Key</div></div>`;
@@ -1397,6 +1409,7 @@ function rStg() {
       <li>v0.4 — 修复去重逻辑、改进关键字匹配稳定性</li>
       <li>v0.5 — 修复portal返回时数据不刷新、子系统进入时重新加载localStorage数据</li>
       <li>v0.6 — 新增Google News关键字RSS订阅、仪表盘大屏可视化（世界地图/饼图/柱图/折线图）、自定义AI服务商（智谱/DeepSeek/Gemini/自定义）、自定义AI提示词、页面首次访问即返回内容、广电总局/电影局页面监控、可打印输出含URL、去除重复深色模式开关、AI连接测试、单条AI摘要</li>
+      <li>v0.7 — 关键字相关性过滤（通用RSS仅保留匹配关键字的内容）、修复AI Key预填、修复国家电影局URL、页面解析过滤ICP/版权/错误页等噪声内容、空Key自动填入测试Key</li>
     </ul>
   </div>`;
   document.getElementById('sBody').innerHTML = h;
