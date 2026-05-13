@@ -550,7 +550,8 @@ function init() {
   }
   // Global AI config - no stored keys
   if (!localStorage.getItem('mon_ai_cfg')) {
-    ls('mon_ai_cfg', {provider:'zhipu', url:'', model:'', key:'', summarizePrompt:'', dedupPrompt:''});
+    // Default config with test key - user should replace with own key for production
+    ls('mon_ai_cfg', {provider:'zhipu', url:'https://open.bigmodel.cn/api/paas/v4/chat/completions', model:'glm-4-flash', key:'89cf52e166744146a966eb905597a5ba.YvQflJOFgM3yX1o8', summarizePrompt:'', dedupPrompt:''});
   }
   document.documentElement.setAttribute('data-theme', lg('mon_theme', 'light'));
   route();
@@ -612,7 +613,7 @@ function enterSys(id) {
   document.getElementById('hSub').textContent = '行业监控系统';
   document.querySelectorAll('#sysTabs .tab').forEach((t,i) => t.classList.toggle('on', i===0));
   document.querySelectorAll('.tp').forEach((p,i) => p.style.display = i===0?'block':'none');
-  rDash(); rSrc(); rTl(); rKw(); rRp();
+  rDash(); rSrc(); rTl(); rKw(); rRp(); rCharts();
   clearInterval(rTimer);
   if (d.cfg.auto) rTimer = setInterval(() => refreshData(), d.cfg.interval * 60000);
 }
@@ -1324,7 +1325,7 @@ function rStg() {
   h += `</select><div class="fh">选择AI服务商，API Key需自行填写，系统不存储预设Key</div></div>`;
   h += `<div class="fg"><label class="fl">API 地址</label><input class="inp" id="aiUrl" value="${esc(aiCfg.url||AI_PROVIDERS[aiCfg.provider||'zhipu'].url)}" placeholder="https://api.example.com/v1/chat/completions"><div class="fh">留空使用服务商默认地址</div></div>`;
   h += `<div class="fg"><label class="fl">模型名称</label><input class="inp" id="aiModel" value="${esc(aiCfg.model||AI_PROVIDERS[aiCfg.provider||'zhipu'].model)}" placeholder="glm-4-flash"></div>`;
-  h += `<div class="fg"><label class="fl">API Key</label><input class="inp" type="password" id="aiKey" value="${esc(aiCfg.key||'')}" placeholder="输入你的API Key"><div class="fh">Key仅存储在浏览器本地，不会上传到任何服务器</div></div>`;
+  h += `<div class="fg"><label class="fl">API Key</label><input class="inp" type="password" id="aiKey" value="${esc(aiCfg.key||'')}" placeholder="输入你的API Key"><div class="fh">Key仅存储在浏览器本地，不会上传。首次使用已预填测试Key，建议替换为自己的Key</div></div>`;
   h += `<div class="fg"><label class="fl">单条摘要提示词</label><textarea class="inp" id="aiSumPrompt" rows="2" placeholder="留空使用默认">${esc(aiCfg.summarizePrompt||'')}</textarea><div class="fh">用于时间线单条AI摘要</div></div>`;
   h += `<div class="fg"><label class="fl">去重提示词</label><textarea class="inp" id="aiDedupPrompt" rows="2" placeholder="留空使用默认">${esc(aiCfg.dedupPrompt||'')}</textarea><div class="fh">用于AI智能去重，留空则不使用AI去重</div></div>`;
   h += `<div style="display:flex;gap:var(--space-sm)"><button class="btn btn-p" onclick="saveAICfg()">保存AI配置</button><button class="btn btn-o" onclick="testAI()">测试连接</button></div>`;
