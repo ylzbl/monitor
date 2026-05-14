@@ -77,99 +77,159 @@ async function handleProxy(request) {
   }
 }
 
-// === WEIBO RSS via visitor auth ===
+// === WEIBO RSS ===
+// Creates a visitor session by following the redirect chain and collecting cookies,
+// then uses those cookies to access the m.weibo.cn API.
 async function handleWeiboRSS(request) {
   const url = new URL(request.url);
   const uid = url.pathname.match(/\/api\/weibo\/(\d+)/)?.[1];
   if (!uid) {
-    return new Response(JSON.stringify({ error: 'Missing Weibo UID. Usage: /api/weibo/{uid}' }), {
+    return new Response(JSON.stringify({ error: 'Missing Weibo UID' }), {
       status: 400,
       headers: corsHeaders({ 'Content-Type': 'application/json' }),
     });
   }
 
   try {
-    // Step 1: Get visitor tid
-    const gvResp = await fetch('https://passport.weibo.com/visitor/genvisitor', {
-      method: 'POST',
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Referer': 'https://weibo.com/',
-      },
-      body: 'cb=visitor_gray_callback&from=weibo',
-    });
-    const gvText = await gvResp.text();
-    const tidMatch = gvText.match(/"tid":"([^"]+)"/);
-    if (!tidMatch) {
-      return new Response(generateEmptyRSS(`weibo_user_${uid}`, 'Visitor auth failed'), {
-        status: 200,
-        headers: corsHeaders({ 'Content-Type': 'application/xml; charset=utf-8' }),
-      });
-    }
-    const tid = tidMatch[1];
+    // Step 1: Visit m.weibo.cn/u/{uid} - follow redirects and collect all cookies
+    const allCookies = {};
+    const cookieJar = [];
 
-    // Step 2: Get visitor cookies
-    const vResp = await fetch(`https://passport.weibo.com/visitor/visitor?a=incarn&t=${encodeURIComponent(tid)}`, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-        'Referer': 'https://weibo.com/',
-      },
-      redirect: 'manual',
-    });
-    const setCookies = vResp.headers.getAll?.('set-cookie') || [];
-    let subCookie = '';
-    for (const sc of setCookies) {
-      const subMatch = sc.match(/SUB=([^;]+)/);
-      if (subMatch) { subCookie = 'SUB=' + subMatch[1]; break; }
-    }
-    if (!subCookie) {
-      const vBody = await vResp.text();
-      const subMatch2 = vBody.match(/SUB=([^;"]+)/);
-      if (subMatch2) subCookie = 'SUB=' + subMatch2[1];
-    }
-
-    // Step 3: Fetch user timeline
-    const apiHeaders = {
+    // First request to m.weibo.cn
+    const r1 = await fetchUrl(`https://m.weibo.cn/u/${uid}`, {
       'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148',
-      'Accept': 'application/json',
-      'Referer': `https://m.weibo.cn/u/${uid}`,
-      'X-Requested-With': 'XMLHttpRequest',
-    };
-    if (subCookie) apiHeaders['Cookie'] = subCookie;
+      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    }, 'manual');
+    collectCookies(r1.headers, allCookies);
 
-    const apiResp = await fetch(`https://m.weibo.cn/api/container/getIndex?containerid=107603${uid}&page=1`, {
-      headers: apiHeaders,
-    });
-    const data = await apiResp.json();
+    // Follow redirect to visitor auth
+    const loc1 = r1.headers.get('location');
+    if (loc1) {
+      const r2 = await fetchUrl(loc1, {
+        'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15',
+        'Referer': 'https://m.weibo.cn/',
+      }, 'manual');
+      collectCookies(r2.headers, allCookies);
 
-    if (!data.ok || !data.data?.cards) {
-      return new Response(generateEmptyRSS(`weibo_user_${uid}`, 'No data from Weibo API'), {
-        status: 200,
-        headers: corsHeaders({ 'Content-Type': 'application/xml; charset=utf-8' }),
-      });
+      // Follow second redirect if any
+      const loc2 = r2.headers.get('location');
+      if (loc2) {
+        const r3 = await fetchUrl(loc2, {
+          'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15',
+          'Referer': loc1,
+        }, 'manual');
+        collectCookies(r3.headers, allCookies);
+      }
     }
 
+    // Step 2: If we got genvisitor response, extract tid and get visitor cookies
+    const body1 = await r1.text();
+    if (body1.includes('visitor_gray_callback') || body1.includes('genvisitor')) {
+      // We need to call genvisitor ourselves
+      const gvResp = await fetchUrl('https://passport.weibo.com/visitor/genvisitor', {
+        'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15',
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Referer': 'https://m.weibo.cn/',
+      }, 'follow', 'POST', 'cb=visitor_gray_callback&from=weibo');
+      const gvText = await gvResp.text();
+      const tidMatch = gvText.match(/"tid":"([^"]+)"/);
+      if (tidMatch) {
+        const tid = tidMatch[1];
+        // Get visitor cookies
+        const vResp = await fetchUrl(`https://passport.weibo.com/visitor/visitor?a=incarn&t=${encodeURIComponent(tid)}`, {
+          'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15',
+          'Referer': 'https://m.weibo.cn/',
+        }, 'manual');
+        collectCookies(vResp.headers, allCookies);
+        // Follow redirect after incarn
+        const vLoc = vResp.headers.get('location');
+        if (vLoc) {
+          const vR2 = await fetchUrl(vLoc, {
+            'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15',
+            'Referer': 'https://passport.weibo.com/',
+            'Cookie': buildCookieString(allCookies),
+          }, 'manual');
+          collectCookies(vR2.headers, allCookies);
+        }
+      }
+    }
+
+    // Step 3: Try the API with all collected cookies
+    const cookieStr = buildCookieString(allCookies);
+    const apiResp = await fetchUrl(
+      `https://m.weibo.cn/api/container/getIndex?containerid=107603${uid}&page=1`,
+      {
+        'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148',
+        'Accept': 'application/json',
+        'Referer': `https://m.weibo.cn/u/${uid}`,
+        'X-Requested-With': 'XMLHttpRequest',
+        'Cookie': cookieStr,
+      },
+      'follow'
+    );
+
+    const apiText = await apiResp.text();
+    let data;
+    try { data = JSON.parse(apiText); } catch { data = null; }
+
+    if (!data || !data.ok || !data.data?.cards) {
+      // Fallback: try scraping the HTML page
+      return await handleWeiboHTMLFallback(uid, cookieStr);
+    }
+
+    return buildWeiboRSSResponse(uid, data);
+  } catch (e) {
+    return new Response(generateEmptyRSS(`weibo_user_${uid}`, e.message), {
+      status: 200,
+      headers: corsHeaders({ 'Content-Type': 'application/xml; charset=utf-8' }),
+    });
+  }
+}
+
+// Fallback: scrape weibo.cn text-mode page for user posts
+async function handleWeiboHTMLFallback(uid, cookieStr) {
+  try {
+    const resp = await fetchUrl(`https://m.weibo.cn/u/${uid}`, {
+      'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15',
+      'Accept': 'text/html',
+      'Cookie': cookieStr || '',
+    }, 'follow');
+    const html = await resp.text();
+
+    // Try to extract posts from HTML
     const items = [];
     let userName = `微博用户${uid}`;
-    for (const card of data.data.cards) {
-      const mblog = card.mblog;
-      if (!mblog) continue;
-      if (mblog.user?.screen_name) userName = mblog.user.screen_name;
-      const rawText = (mblog.text || '').replace(/<[^>]+>/g, '').trim();
-      const title = mblog.status_title || mblog.page_info?.title || truncateText(rawText, 80) || '微博动态';
-      const link = mblog.mid ? `https://weibo.com/${mblog.user?.id || uid}/${mblog.mid}` : `https://m.weibo.cn/status/${mblog.id}`;
-      const pubDate = mblog.created_at ? parseWeiboDate(mblog.created_at) : new Date().toUTCString();
-      items.push({ title, link, pubDate, description: rawText || title });
+
+    // Look for render_data in the HTML (m.weibo.cn embeds JSON data)
+    const renderMatch = html.match(/var\s+\$render_data\s*=\s*\[([^\]]+)\]/s);
+    if (renderMatch) {
+      try {
+        const renderData = JSON.parse(unescapeHtml(renderMatch[1]));
+        const cards = renderData?.tabsInfo?.selectedTab?.card_group || [];
+        for (const card of cards) {
+          const mblog = card.mblog;
+          if (!mblog) continue;
+          if (mblog.user?.screen_name) userName = mblog.user.screen_name;
+          const rawText = (mblog.text || '').replace(/<[^>]+>/g, '').trim();
+          const title = truncateText(rawText, 80) || '微博动态';
+          const link = mblog.mid ? `https://weibo.com/${mblog.user?.id || uid}/${mblog.mid}` : `https://m.weibo.cn/status/${mblog.id}`;
+          const pubDate = mblog.created_at ? parseWeiboDate(mblog.created_at) : new Date().toUTCString();
+          items.push({ title, link, pubDate, description: rawText || title });
+        }
+      } catch (e) {}
+    }
+
+    if (items.length === 0) {
+      return new Response(generateEmptyRSS(`weibo_user_${uid}`, 'No posts found'), {
+        status: 200,
+        headers: corsHeaders({ 'Content-Type': 'application/xml; charset=utf-8' }),
+      });
     }
 
     const rssXml = generateRSS(`微博-${userName}`, `https://weibo.com/u/${uid}`, `${userName}的微博动态`, items);
     return new Response(rssXml, {
       status: 200,
-      headers: corsHeaders({
-        'Content-Type': 'application/xml; charset=utf-8',
-        'Cache-Control': 'public, max-age=300',
-      }),
+      headers: corsHeaders({ 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=300' }),
     });
   } catch (e) {
     return new Response(generateEmptyRSS(`weibo_user_${uid}`, e.message), {
@@ -179,14 +239,64 @@ async function handleWeiboRSS(request) {
   }
 }
 
+function buildWeiboRSSResponse(uid, data) {
+  const items = [];
+  let userName = `微博用户${uid}`;
+  for (const card of data.data.cards) {
+    const mblog = card.mblog;
+    if (!mblog) continue;
+    if (mblog.user?.screen_name) userName = mblog.user.screen_name;
+    const rawText = (mblog.text || '').replace(/<[^>]+>/g, '').trim();
+    const title = mblog.status_title || mblog.page_info?.title || truncateText(rawText, 80) || '微博动态';
+    const link = mblog.mid ? `https://weibo.com/${mblog.user?.id || uid}/${mblog.mid}` : `https://m.weibo.cn/status/${mblog.id}`;
+    const pubDate = mblog.created_at ? parseWeiboDate(mblog.created_at) : new Date().toUTCString();
+    items.push({ title, link, pubDate, description: rawText || title });
+  }
+  const rssXml = generateRSS(`微博-${userName}`, `https://weibo.com/u/${uid}`, `${userName}的微博动态`, items);
+  return new Response(rssXml, {
+    status: 200,
+    headers: corsHeaders({ 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=300' }),
+  });
+}
+
+// Helper: fetch URL with timeout
+async function fetchUrl(url, headers, redirect = 'follow', method = 'GET', body = null) {
+  const ctrl = new AbortController();
+  const tid = setTimeout(() => ctrl.abort(), 10000);
+  const opts = { method, signal: ctrl.signal, headers, redirect };
+  if (body) opts.body = body;
+  const resp = await fetch(url, opts);
+  clearTimeout(tid);
+  return resp;
+}
+
+// Helper: collect Set-Cookie headers into an object
+function collectCookies(headers, cookieObj) {
+  // Cloudflare Workers combines Set-Cookie headers
+  const sc = headers.get('set-cookie');
+  if (!sc) return;
+  // Parse all cookie key=value pairs
+  const cookies = sc.split(/,\s*(?=[A-Za-z_])/);
+  for (const c of cookies) {
+    const m = c.match(/^([^=]+)=([^;]*)/);
+    if (m) cookieObj[m[1].trim()] = m[2];
+  }
+}
+
+function buildCookieString(cookieObj) {
+  return Object.entries(cookieObj).map(([k, v]) => `${k}=${v}`).join('; ');
+}
+
+function unescapeHtml(s) {
+  return s.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'");
+}
+
 function parseWeiboDate(dateStr) {
   try {
     const d = new Date(dateStr);
     if (!isNaN(d.getTime())) return d.toUTCString();
     return new Date().toUTCString();
-  } catch {
-    return new Date().toUTCString();
-  }
+  } catch { return new Date().toUTCString(); }
 }
 
 function truncateText(text, maxLen) {
