@@ -254,7 +254,7 @@ async function refreshData() {
     const txt = (item.title || '').toLowerCase();
     return allKw.some(kw => txt.includes(kw));
   });
-  if (relevanceFiltered.length > 0) unique = relevanceFiltered;
+  unique = relevanceFiltered;
   // Keyword match
   unique.forEach(item => { const txt = (item.title||'').toLowerCase(); allKw.forEach(kw => { if (txt.includes(kw)) item.important = true; }); });
   d.items = [...unique, ...d.items].slice(0, d.cfg.maxItems);
