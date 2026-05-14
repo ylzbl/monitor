@@ -5,6 +5,18 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>行业监控系统 | 娱乐资本论</title>
 <link rel="stylesheet" href="common.css">
+<style>
+.hero{text-align:center;padding:var(--space-xl) 0 var(--space-lg)}
+.hero h1{font-size:var(--font-2xl);font-weight:900;margin-bottom:var(--space-sm);background:linear-gradient(135deg,#E91E8C,#7C3AED,#1565C0,#0D9488);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{color:var(--text-secondary);font-size:var(--font-base);max-width:600px;margin:0 auto;line-height:1.8}
+.hero-stats{display:flex;justify-content:center;gap:var(--space-xl);margin-top:var(--space-lg);flex-wrap:wrap}
+.hero-stat{text-align:center}
+.hero-stat .val{font-size:var(--font-2xl);font-weight:900;color:var(--accent)}
+.hero-stat .label{font-size:var(--font-xs);color:var(--text-muted);margin-top:2px}
+.update-notify{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border-radius:20px;font-size:var(--font-xs);font-weight:700;margin-top:var(--space-md);animation:pulse-badge 2s ease infinite}
+.update-notify.has{background:var(--ok)20;color:var(--ok)}
+.update-notify.none{background:var(--bg-secondary);color:var(--text-muted)}
+</style>
 </head>
 <body>
 <header class="hdr">
@@ -22,9 +34,11 @@
 <div class="tc" id="tc"></div>
 
 <div class="ctn">
-  <div style="text-align:center;padding:var(--space-xl) 0">
-    <h1 style="font-size:var(--font-2xl);font-weight:900;margin-bottom:var(--space-sm)">行业监控系统</h1>
-    <p style="color:var(--text-secondary);margin-bottom:var(--space-xl)">娱乐资本论 · 全网内容实时巡检与自动化采集平台</p>
+  <div class="hero">
+    <h1>行业监控系统</h1>
+    <p>娱乐资本论 · 全网内容实时巡检与自动化采集平台<br>覆盖潮玩、广电、票房、短剧、传媒上市公司五大行业板块</p>
+    <div class="hero-stats" id="heroStats"></div>
+    <div id="updateNotify"></div>
   </div>
   <div class="ptl-g" id="ptlGrid"></div>
 </div>
@@ -44,7 +58,6 @@ let autoRefreshDone = false;
 
 function init() {
   initGlobalConfig();
-  // Init all subsystem data
   for (const id of Object.keys(SYS)) {
     sysData[id] = initSysData(id);
   }
@@ -59,6 +72,7 @@ function init() {
 
 function renderPortal() {
   const g = document.getElementById('ptlGrid');
+  let totalSources = 0, totalItems = 0, totalToday = 0;
   g.innerHTML = Object.values(SYS).map(s => {
     const d = sysData[s.id];
     const en = d.sources.filter(x => x.enabled).length;
@@ -66,17 +80,33 @@ function renderPortal() {
     const today = new Date(); today.setHours(0,0,0,0);
     const todayN = d.items.filter(i => i.ts >= today.getTime()).length;
     const hasUpdate = todayN > 0;
-    return `<div class="ptl-c ${hasUpdate?'has-update':''}" onclick="location.href='monitor.html#${s.id}'" style="--accent:${s.accent}">
+    totalSources += en;
+    totalItems += total;
+    totalToday += todayN;
+    return `<div class="ptl-c ${hasUpdate?'has-update':''}" onclick="location.href='${s.file}'" style="--accent:${s.accent}">
       <div class="ptl-i">${s.icon}</div>
       <div class="ptl-t">${s.name}</div>
       <div class="ptl-d">${s.desc}</div>
       <div style="margin-top:var(--space-md);display:flex;gap:var(--space-md)">
         <span class="ptl-badge ${hasUpdate?'has-update':''}">${en} 信息源</span>
         <span class="ptl-badge">${total} 监控项</span>
-        ${todayN > 0 ? `<span class="ptl-badge" style="background:var(--accent);color:#fff">${todayN} 今日新增</span>` : ''}
+        ${todayN > 0 ? `<span class="ptl-badge" style="background:${s.accent};color:#fff">${todayN} 今日新增</span>` : ''}
       </div>
     </div>`;
   }).join('');
+  // Hero stats
+  document.getElementById('heroStats').innerHTML = `
+    <div class="hero-stat"><div class="val">${Object.keys(SYS).length}</div><div class="label">监控板块</div></div>
+    <div class="hero-stat"><div class="val">${totalSources}</div><div class="label">活跃信息源</div></div>
+    <div class="hero-stat"><div class="val">${totalItems}</div><div class="label">监控条目</div></div>
+    <div class="hero-stat"><div class="val">${totalToday}</div><div class="label">今日新增</div></div>`;
+  // Update notification
+  const notifyEl = document.getElementById('updateNotify');
+  if (totalToday > 0) {
+    notifyEl.innerHTML = `<span class="update-notify has">&#9679; 今日已更新 ${totalToday} 条内容</span>`;
+  } else {
+    notifyEl.innerHTML = `<span class="update-notify none">暂无今日更新</span>`;
+  }
 }
 
 async function refreshAll() {
@@ -112,14 +142,13 @@ async function refreshAll() {
             ok++;
           } catch(e) { fail++; }
         }
-        // Relevance filter for generic RSS
+        // Relevance filter
         const allKw = [...d.keywords, ...d.alertKw];
         const filtered = items.filter(item => {
           if (item.type === 'page') return true;
           return kwMatch(item.title || '', allKw);
         });
         items = filtered;
-        // Keyword match
         items.forEach(item => {
           if (kwMatch(item.title || '', allKw)) item.important = true;
         });

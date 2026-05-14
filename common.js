@@ -1,8 +1,8 @@
 /* ============================================================
-   行业监控系统 v0.8 — 共享核心逻辑
+   行业监控系统 v0.9 — 共享核心逻辑
    娱乐资本论
    ============================================================ */
-const V = '0.8';
+const V = '0.9';
 
 // === BLOCKED DOMAINS (compliance filter) ===
 const BLOCKED_DOMAINS = [
@@ -42,73 +42,92 @@ const SYS = {
     id:'chaowan',name:'潮玩行业每日监控',icon:'🎮',
     desc:'实时掌握潮玩行业舆情动态、产品热度、价格波动、竞品动作',
     accent:'#E91E8C',
+    file:'chaowan.html',
     defaultSources:[
-      {name:'虎嗅-消费',url:'https://rss.huxiu.com/',type:'rss',category:'行业'},
-      {name:'36氪-消费',url:'https://36kr.com/newsflashes',type:'page',category:'快讯'},
-      {name:'IT之家',url:'https://www.ithome.com/rss/',type:'rss',category:'科技'},
-      {name:'澎湃新闻',url:'https://feedx.net/rss/thepaper.xml',type:'rss',category:'综合'},
+      {name:'中外玩具网-潮玩',url:'https://www.ctoy.com.cn/n/all-66',type:'page',category:'行业门户'},
+      {name:'泡泡玛特IR',url:'https://www.popmart.com.cn/home/investor',type:'page',category:'上市公司'},
+      {name:'52TOYS新闻',url:'https://www.52toys.com/news',type:'page',category:'品牌动态'},
+      {name:'TOP TOY资讯',url:'https://www.toptoyglobal.com/news/2.html',type:'page',category:'品牌动态'},
+      {name:'娱乐资本论',url:'https://ylzbl.com',type:'page',category:'行业媒体'},
+      {name:'36氪快讯',url:'https://36kr.com/feed-newsflash',type:'rss',category:'综合资讯'},
+      {name:'界面-文娱',url:'https://m.jiemian.com/lists/63_1.html',type:'page',category:'综合资讯'},
     ],
-    defaultKeywords:['泡泡玛特','盲盒','潮玩','TOP TOY','52TOYS','寻找独角兽','Skullpanda','Molly','Dimoo','LABUBU','popmart','手办','扭蛋','潮品','文创产品','玩具行业','盲盒市场','潮玩市场','IP联名','潮流玩具','收藏玩具','二次元周边','模型玩具'],
-    defaultAlertKeywords:['泡泡玛特','违规','召回','下架','监管','侵权','假货'],
-    defaultAIPrompt:'你是{sys}的数据分析师，专注于潮玩行业。请根据监控数据生成{type}摘要：1.潮玩行业重大事件与新品动态；2.品牌风险与合规警示；3.行业趋势判断。简明扼要，中文。'
+    defaultKeywords:['泡泡玛特','盲盒','潮玩','TOP TOY','52TOYS','寻找独角兽','Skullpanda','Molly','Dimoo','LABUBU','popmart','手办','扭蛋','潮品','文创产品','玩具行业','盲盒市场','潮玩市场','IP联名','潮流玩具','收藏玩具','二次元周边','模型玩具','高达','万代','好利来联名','名创优品','海贼王','火影','三丽鸥','迪士尼','奥特曼','蛋仔派对','谷子','二次元消费','ACG周边'],
+    defaultAlertKeywords:['泡泡玛特','违规','召回','下架','监管','侵权','假货','质量问题','安全事故'],
+    defaultAIPrompt:'你是{sys}的数据分析师，专注于潮玩行业。请根据监控数据生成{type}摘要：1.潮玩行业重大事件与新品动态；2.品牌风险与合规警示；3.IP联名与市场趋势判断。简明扼要，中文。'
   },
   guangdian:{
     id:'guangdian',name:'广电总局数据监控',icon:'📡',
     desc:'覆盖项目发行、节目备案、传播数据、播出资质、违规风险',
     accent:'#1565C0',
+    file:'guangdian.html',
     defaultSources:[
-      {name:'广电总局-通知公告',url:'http://www.nrta.gov.cn/art/chengwenxingwj/gztg.shtml',type:'page',category:'政务'},
-      {name:'重点网络影视剧备案',url:'http://211.146.10.138:8080/YSJBA/',type:'page',category:'备案'},
-      {name:'虎嗅',url:'https://rss.huxiu.com/',type:'rss',category:'行业'},
-      {name:'澎湃新闻',url:'https://feedx.net/rss/thepaper.xml',type:'rss',category:'综合'},
-      {name:'36氪',url:'https://36kr.com/newsflashes',type:'page',category:'快讯'},
+      {name:'广电总局-公告公示',url:'https://www.nrta.gov.cn/col/col113/index.html',type:'page',category:'政府公告'},
+      {name:'广电总局-电视剧备案',url:'https://www.nrta.gov.cn/col/col2081/index.html',type:'page',category:'备案公示'},
+      {name:'国家电影局-备案公示',url:'https://www.chinafilm.gov.cn/xxgk/gsxx/dybalx/',type:'page',category:'备案公示'},
+      {name:'国家电影局-公映许可',url:'https://www.chinafilm.gov.cn/xxgk/gsxx/dygyxkz',type:'page',category:'许可证'},
+      {name:'国家电影局首页',url:'https://www.chinafilm.gov.cn',type:'page',category:'政策法规'},
+      {name:'重点网络影视剧备案',url:'https://dsbei.nrta.gov.cn',type:'page',category:'备案系统'},
+      {name:'娱乐资本论',url:'https://ylzbl.com',type:'page',category:'行业媒体'},
     ],
-    defaultKeywords:['备案','审查','许可证','播出','违规','下架','限令','综艺','电视剧','网络剧','动画片','广播电视','电影局','放映许可证','龙标','备案公示','广电总局','网络视听','内容审核','电视剧备案','网络剧备案','影视剧审查','播出许可','广播电视法','网信办','文娱监管','影视监管','播出资质'],
-    defaultAlertKeywords:['下架','违规','处罚','限令','整改','禁播','约谈'],
-    defaultAIPrompt:'你是{sys}的数据分析师，专注于广电政策与合规。请根据监控数据生成{type}摘要：1.政策法规变化；2.违规下架风险；3.备案审查动态。简明扼要，中文。'
+    defaultKeywords:['备案','审查','许可证','播出','违规','下架','限令','综艺','电视剧','网络剧','动画片','广播电视','电影局','放映许可证','龙标','备案公示','广电总局','网络视听','内容审核','电视剧备案','网络剧备案','影视剧审查','播出许可','广播电视法','网信办','文娱监管','影视监管','播出资质','微短剧备案','动画片审查','引进片','进口片','合拍片','内容安全'],
+    defaultAlertKeywords:['下架','违规','处罚','限令','整改','禁播','约谈','封杀','行政处罚','吊销许可'],
+    defaultAIPrompt:'你是{sys}的数据分析师，专注于广电政策与合规。请根据监控数据生成{type}摘要：1.政策法规变化与影响分析；2.违规下架风险与案例；3.备案审查动态与趋势。简明扼要，中文。'
   },
   piaofang:{
     id:'piaofang',name:'中国电影票房监控',icon:'🎬',
     desc:'实时采集影片票房、排片占比、上座率、口碑评分、舆情动态',
     accent:'#D97706',
+    file:'piaofang.html',
     defaultSources:[
-      {name:'1905电影网',url:'https://www.1905.com/rss',type:'rss',category:'电影'},
       {name:'猫眼专业版',url:'https://piaofang.maoyan.com/dashboard',type:'page',category:'票房数据'},
-      {name:'虎嗅',url:'https://rss.huxiu.com/',type:'rss',category:'行业'},
-      {name:'澎湃新闻',url:'https://feedx.net/rss/thepaper.xml',type:'rss',category:'综合'},
-      {name:'36氪',url:'https://36kr.com/newsflashes',type:'page',category:'快讯'},
+      {name:'猫眼年度排行',url:'https://piaofang.maoyan.com/rankings/year',type:'page',category:'票房排行'},
+      {name:'1905电影网',url:'https://www.1905.com',type:'page',category:'电影资讯'},
+      {name:'艺恩-电影票房',url:'https://ys.endata.cn/BoxOffice/Movie',type:'page',category:'票房数据'},
+      {name:'灯塔专业版',url:'https://piaofang.taopiaopiao.com',type:'page',category:'票房数据'},
+      {name:'骨朵剧集排行',url:'http://d2.guduomedia.com',type:'page',category:'数据平台'},
+      {name:'娱乐资本论',url:'https://ylzbl.com',type:'page',category:'行业媒体'},
     ],
-    defaultKeywords:['票房','排片','上座率','预售','破亿','口碑','豆瓣评分','档期','院线','观影人次','票房冠军','票房纪录','春节档','国庆档','暑期档','国产电影','引进片','票房收入','票房突破','电影市场','首日票房','总票房','单片票房','银幕数','场均人次','电影票房'],
-    defaultAlertKeywords:['票房破亿','撤档','偷票房','口碑崩','票房惨败'],
-    defaultAIPrompt:'你是{sys}的数据分析师，专注于电影市场。请根据监控数据生成{type}摘要：1.票房排行榜及趋势；2.重点影片口碑与排片；3.档期市场动态。简明扼要，中文。'
+    defaultKeywords:['票房','排片','上座率','预售','破亿','口碑','豆瓣评分','档期','院线','观影人次','票房冠军','票房纪录','春节档','国庆档','暑期档','国产电影','引进片','票房收入','票房突破','电影市场','首日票房','总票房','单片票房','银幕数','场均人次','电影票房','密钥','延期','撤档','点映','猫眼','淘票票','灯塔','艺恩'],
+    defaultAlertKeywords:['票房破亿','撤档','偷票房','口碑崩','票房惨败','退票','盗版','偷漏票房'],
+    defaultAIPrompt:'你是{sys}的数据分析师，专注于电影市场。请根据监控数据生成{type}摘要：1.票房排行榜及趋势分析；2.重点影片口碑与排片走势；3.档期市场动态与预测。简明扼要，中文。'
   },
   duanju:{
     id:'duanju',name:'短剧数据监控',icon:'📱',
     desc:'聚焦全网短剧行业，实时采集播放量、热度、竞品动态、政策',
     accent:'#7C3AED',
+    file:'duanju.html',
     defaultSources:[
-      {name:'虎嗅',url:'https://rss.huxiu.com/',type:'rss',category:'行业'},
-      {name:'澎湃新闻',url:'https://feedx.net/rss/thepaper.xml',type:'rss',category:'综合'},
-      {name:'36氪',url:'https://36kr.com/newsflashes',type:'page',category:'快讯'},
-      {name:'IT之家',url:'https://www.ithome.com/rss/',type:'rss',category:'科技'},
+      {name:'新腕儿',url:'https://www.xinwanr.com',type:'page',category:'行业研究'},
+      {name:'DataEye媒体中心',url:'https://www.dataeye.com/media-center.html',type:'page',category:'数据平台'},
+      {name:'DataEye行业报告',url:'https://www.dataeye.com/report.html',type:'page',category:'行业报告'},
+      {name:'短剧自习室',url:'https://duanju007.com',type:'page',category:'行业社区'},
+      {name:'广电总局-网络剧许可',url:'https://www.nrta.gov.cn/col/col113/index.html',type:'page',category:'政府公告'},
+      {name:'重点网络影视剧备案',url:'https://dsbei.nrta.gov.cn',type:'page',category:'备案系统'},
+      {name:'娱乐资本论',url:'https://ylzbl.com',type:'page',category:'行业媒体'},
+      {name:'36氪快讯',url:'https://36kr.com/feed-newsflash',type:'rss',category:'综合资讯'},
     ],
-    defaultKeywords:['短剧','微短剧','小程序剧','竖屏剧','投流','短剧备案','快手短剧','抖音短剧','短剧出海','付费短剧','免费短剧','短剧平台','DataEye','短剧爆款','短剧投流','短剧充值','短剧制作','短剧发行','横屏短剧','竖屏短剧','长视频平台','短视频平台','短剧监管','微短剧备案','短剧市场'],
-    defaultAlertKeywords:['下架','监管','备案','违规','处罚','禁播','约谈'],
-    defaultAIPrompt:'你是{sys}的数据分析师，专注于短剧产业。请根据监控数据生成{type}摘要：1.短剧爆款趋势；2.监管与合规风险；3.平台与投流动态。简明扼要，中文。'
+    defaultKeywords:['短剧','微短剧','小程序剧','竖屏剧','投流','短剧备案','快手短剧','抖音短剧','短剧出海','付费短剧','免费短剧','短剧平台','DataEye','短剧爆款','短剧投流','短剧充值','短剧制作','短剧发行','横屏短剧','竖屏短剧','长视频平台','短视频平台','短剧监管','微短剧备案','短剧市场','新腕儿','九州文化','短剧投流ROI','短剧制作成本','ReelShort','短剧女演员','短剧男演员','短剧编剧','短剧导演','点众科技','中文在线短剧'],
+    defaultAlertKeywords:['下架','监管','备案','违规','处罚','禁播','约谈','整改','劣迹艺人'],
+    defaultAIPrompt:'你是{sys}的数据分析师，专注于短剧产业。请根据监控数据生成{type}摘要：1.短剧爆款趋势与平台动态；2.监管合规与备案风险；3.投流ROI与出海机遇。简明扼要，中文。'
   },
   shangshi:{
     id:'shangshi',name:'娱乐传媒上市公司监控',icon:'📈',
     desc:'实时监控财报、营收、利润、股价、公告、舆情、项目动态',
     accent:'#0D9488',
+    file:'shangshi.html',
     defaultSources:[
-      {name:'巨潮资讯网',url:'http://www.cninfo.com.cn/new/disclosure/stock?stockId=&orgId=&tabname=fulltext',type:'page',category:'公告'},
-      {name:'虎嗅',url:'https://rss.huxiu.com/',type:'rss',category:'行业'},
-      {name:'澎湃新闻',url:'https://feedx.net/rss/thepaper.xml',type:'rss',category:'综合'},
-      {name:'IT之家',url:'https://www.ithome.com/rss/',type:'rss',category:'科技'},
-      {name:'36氪',url:'https://36kr.com/newsflashes',type:'page',category:'快讯'},
+      {name:'巨潮资讯网',url:'https://www.cninfo.com.cn',type:'page',category:'公告披露'},
+      {name:'东方财富-文娱传媒',url:'https://quote.eastmoney.com/zz/2.H30365.html',type:'page',category:'行业板块'},
+      {name:'东方财富-行业研报',url:'https://stock.eastmoney.com/hangye/hy1266.html',type:'page',category:'研报'},
+      {name:'港交所-披露易',url:'https://www.hkexnews.hk',type:'page',category:'港股公告'},
+      {name:'泡泡玛特IR',url:'https://www.popmart.com.cn/home/investor',type:'page',category:'公司公告'},
+      {name:'娱乐资本论',url:'https://ylzbl.com',type:'page',category:'行业媒体'},
+      {name:'36氪快讯',url:'https://36kr.com/feed-newsflash',type:'rss',category:'综合资讯'},
+      {name:'界面-文娱',url:'https://m.jiemian.com/lists/63_1.html',type:'page',category:'综合资讯'},
     ],
-    defaultKeywords:['财报','营收','利润','股价','公告','增持','减持','定增','重组','立案','退市','业绩预告','年度报告','证监会','分红','股权质押','光线传媒','华谊兄弟','万达电影','博纳影业','欢瑞世纪','慈文传媒','华策影视','芒果超媒','中文在线','阅文集团','快手','哔哩哔哩','爱奇艺','传媒板块','影视股','娱乐股','文娱行业','传媒行业','影视公司','上市公司公告','股转','新三板'],
-    defaultAlertKeywords:['立案','退市','亏损','暴跌','证监会','处罚','违规','诉讼','冻结','强平'],
+    defaultKeywords:['财报','营收','利润','股价','公告','增持','减持','定增','重组','立案','退市','业绩预告','年度报告','证监会','分红','股权质押','光线传媒','华谊兄弟','万达电影','博纳影业','欢瑞世纪','慈文传媒','华策影视','芒果超媒','中文在线','阅文集团','快手','哔哩哔哩','爱奇艺','传媒板块','影视股','娱乐股','文娱行业','传媒行业','影视公司','上市公司公告','股转','新三板','泡泡玛特','猫眼娱乐','IMAX中国','猫眼','阿里影业','腾讯音乐'],
+    defaultAlertKeywords:['立案','退市','亏损','暴跌','证监会','处罚','违规','诉讼','冻结','强平','ST','退市风险','商誉减值','业绩变脸'],
     defaultAIPrompt:'你是{sys}的数据分析师，专注于传媒上市公司。请根据监控数据生成{type}摘要：1.重要财报与业绩动态；2.股价异动与风险事件；3.监管处罚与合规风险。简明扼要，中文。'
   }
 };
@@ -146,6 +165,7 @@ function esc(s){return s?String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').re
 
 // === FORMAT TIME ===
 function fmtTime(ts){return ts?new Date(ts).toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}):'--:--'}
+function fmtDate(ts){return ts?new Date(ts).toLocaleDateString('zh-CN'):'--'}
 
 // === KEYWORD HIGHLIGHT ===
 function hlKw(text,kws){
@@ -161,12 +181,24 @@ function kwMatch(text, keywords){
   const txt = text.toLowerCase();
   return keywords.some(kw => {
     const kwLow = kw.toLowerCase();
-    // For keywords >= 4 chars, use includes (safe enough)
     if (kwLow.length >= 4) return txt.includes(kwLow);
-    // For short keywords (1-3 chars), require word boundary
     try { return new RegExp('\\b' + kwLow.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + '\\b').test(txt); }
     catch { return txt.includes(kwLow); }
   });
+}
+
+// === CONTENT RELEVANCE SCORE ===
+function relevanceScore(title, keywords){
+  if(!title) return 0;
+  const txt = title.toLowerCase();
+  let score = 0;
+  keywords.forEach(kw => {
+    const kwLow = kw.toLowerCase();
+    if (txt.includes(kwLow)) {
+      score += kwLow.length >= 4 ? 2 : 1; // longer keywords = more relevant
+    }
+  });
+  return score;
 }
 
 // === COMPLIANCE CHECK ===
@@ -378,7 +410,6 @@ function get7DayData(items){
 
 // === INIT GLOBAL CONFIG ===
 function initGlobalConfig(){
-  // AI config
   const aiExist=localStorage.getItem('mon_ai');
   if(!aiExist){
     ls('mon_ai',{provider:'zhipu',url:'https://open.bigmodel.cn/api/paas/v4/chat/completions',model:'glm-4-flash',key:'89cf52e166744146a966eb905597a5ba.YvQflJOFgM3yX1o8',summarizePrompt:'',dedupPrompt:''});
@@ -386,11 +417,9 @@ function initGlobalConfig(){
     const aiParsed=JSON.parse(aiExist);
     if(!aiParsed.key){aiParsed.key='89cf52e166744146a966eb905597a5ba.YvQflJOFgM3yX1o8';ls('mon_ai',aiParsed)}
   }
-  // Global config
   if(!localStorage.getItem('mon_global')){
     ls('mon_global',{compliance:true});
   }
-  // Theme
   document.documentElement.setAttribute('data-theme',lg('mon_theme','light'));
 }
 
@@ -421,32 +450,61 @@ function initSysData(id){
 
 // === CHANGELOG (reverse order) ===
 const CHANGELOG = [
+  {v:'0.9',date:'2026-05-14',changes:[
+    '拆分为独立子系统页面（5个独立HTML文件）',
+    '全面替换行业专属信息源（中外玩具网、新腕儿、DataEye、国家电影局等）',
+    '扩充关键字库（潮玩增加谷子/二次元消费等，短剧增加ROI/出海等）',
+    '新增出版物风格PDF报告生成（含封面、表格、图表、页眉页脚）',
+    '首页自动运行监控，有新内容时卡片变色+脉冲动画提醒',
+    '设置面板增加README说明文档',
+    '优化内容相关性评分，仅保留高相关度条目',
+    '合规检查默认开启，屏蔽敏感境外源',
+    '移除Google News RSS作为默认源',
+    '深色模式等设置项统一收入设置面板',
+  ]},
   {v:'0.8',date:'2026-05-14',changes:[
     '多文件架构拆分（index.html + monitor.html + common.css + common.js）',
-    '移除Google News RSS默认源（避免敏感内容）',
-    '新增合规内容过滤（屏蔽境外被墙源，可开关）',
+    '移除Google News RSS默认源',
+    '新增合规内容过滤',
     '页面打开自动运行一次监测',
-    '首页子系统卡片有新内容时变色提醒',
-    '世界地图替换为专业SVG剪影',
     '新增关键字词云可视化',
-    '打印功能改为生成出版物风格报告（含表格/图表）',
-    '深色模式等设置项统一收入设置面板',
-    '抓取内容支持CSV导出（UTF-8 BOM，Excel不乱码）',
-    '设置项支持JSON导入导出',
-    'Changelog改为倒序',
-    '关键字相关性过滤：通用RSS仅保留匹配关键字的条目',
-    '页面解析噪声过滤（ICP/版权/错误页等）',
-    '自定义AI服务商（智谱/DeepSeek/Gemini/自定义）+自定义Prompt',
-    'AI连接测试 + 单条AI摘要'
   ]},
-  {v:'0.7',date:'2026-05-13',changes:['关键字相关性过滤','修复AI Key预填','修复国家电影局URL','页面解析过滤噪声']},
-  {v:'0.6',date:'2026-05-13',changes:['Google News RSS订阅','仪表盘可视化','自定义AI','可打印输出','页面首次访问返回内容']},
-  {v:'0.5',date:'2026-05-13',changes:['修复portal返回数据刷新','子系统进入时重新加载']},
+  {v:'0.7',date:'2026-05-13',changes:['关键字相关性过滤','修复AI Key预填','修复国家电影局URL']},
+  {v:'0.6',date:'2026-05-13',changes:['仪表盘可视化','自定义AI','可打印输出']},
+  {v:'0.5',date:'2026-05-13',changes:['修复portal返回数据刷新']},
   {v:'0.4',date:'2026-05-13',changes:['修复去重逻辑','改进关键字匹配']},
   {v:'0.3',date:'2026-05-13',changes:['rss2json备选方案']},
   {v:'0.2',date:'2026-05-13',changes:['修复默认信息源','添加进度条']},
-  {v:'0.1',date:'2026-05-13',changes:['初始版本：5子系统、RSS采集、页面轮询、关键字告警、AI摘要']}
+  {v:'0.1',date:'2026-05-13',changes:['初始版本']}
 ];
+
+// === README ===
+const README = `
+# 行业监控系统 v${V}
+
+## 概述
+行业监控系统是由**娱乐资本论**自主研发的全网内容实时巡检与自动化采集平台，覆盖潮玩、广电、票房、短剧、传媒上市公司五大行业板块。
+
+## 功能特性
+- **5大行业监控板块**：每个板块配备行业专属信息源、关键字、告警规则
+- **自动采集**：支持RSS订阅和网页轮询两种采集方式，页面打开即自动运行
+- **AI智能摘要**：支持智谱GLM、DeepSeek、Gemini等AI服务商，可自定义Prompt
+- **合规过滤**：默认开启中国大陆合规检查，屏蔽敏感境外新闻源
+- **出版物风格报告**：生成含封面、表格、图表的专业监控报告
+- **数据可视化**：仪表盘含饼图、柱状图、折线图、词云、世界地图
+- **浏览器通知**：重要告警实时推送桌面通知
+
+## 部署方式
+1. 直接浏览器打开 index.html 即可使用
+2. 部署到 GitHub Pages
+3. 打包为zip上传到 Cloudflare Workers
+
+## 数据存储
+所有数据存储在浏览器 localStorage 中，不传输到任何服务器。支持JSON导入导出设置、CSV导出监控数据。
+
+## 知识产权
+本系统全部知识产权归 [娱乐资本论](https://ylzbl.com/) 所有。
+`;
 
 // === SETTINGS RENDER ===
 function renderSettingsBody(curSysId, D){
@@ -462,15 +520,15 @@ function renderSettingsBody(curSysId, D){
   h+=`</select><div class="fh">首次使用已预填测试Key，可替换为自己的Key</div></div>`;
   h+=`<div class="fg"><label class="fl">API 地址</label><input class="inp" id="aiUrl" value="${esc(aiCfg.url||AI_PROVIDERS[aiCfg.provider||'zhipu'].url)}" placeholder="https://api.example.com/v1/chat/completions"></div>`;
   h+=`<div class="fg"><label class="fl">模型名称</label><input class="inp" id="aiModel" value="${esc(aiCfg.model||AI_PROVIDERS[aiCfg.provider||'zhipu'].model)}"></div>`;
-  h+=`<div class="fg"><label class="fl">API Key</label><input class="inp" type="password" id="aiKey" value="${esc(aiCfg.key||'')}"><div class="fh">Key仅存储在浏览器本地。首次使用已预填测试Key</div></div>`;
+  h+=`<div class="fg"><label class="fl">API Key</label><input class="inp" type="password" id="aiKey" value="${esc(aiCfg.key||'')}"><div class="fh">Key仅存储在浏览器本地</div></div>`;
   h+=`<div class="fg"><label class="fl">单条摘要提示词</label><textarea class="inp" id="aiSumPrompt" rows="2">${esc(aiCfg.summarizePrompt||'')}</textarea></div>`;
   h+=`<div class="fg"><label class="fl">去重提示词</label><textarea class="inp" id="aiDedupPrompt" rows="2">${esc(aiCfg.dedupPrompt||'')}</textarea></div>`;
   h+=`<div style="display:flex;gap:var(--space-sm)"><button class="btn btn-p" onclick="saveAICfg()">保存AI配置</button><button class="btn btn-o" onclick="testAI()">测试连接</button></div>`;
 
   // Global settings
   h+=`<div class="abt" style="margin-top:var(--space-xl)"><h3>全局设置</h3></div>`;
-  h+=`<div class="fg"><label class="fl">深色模式</label><label class="tog"><input type="checkbox" ${document.documentElement.getAttribute('data-theme')==='dark'?'checked':''} onchange="toggleTheme();document.getElementById('sModal').querySelector('.mdl-b').innerHTML='';renderSettingsBody&&(document.getElementById('sModal').querySelector('.mdl-b').innerHTML=renderSettingsBody(currentSysId,sysData))"><span class="tog-t"><span class="tog-k"></span></span><span>${document.documentElement.getAttribute('data-theme')==='dark'?'开启':'关闭'}</span></label></div>`;
-  h+=`<div class="fg"><label class="fl">合规检查</label><label class="tog"><input type="checkbox" id="complianceChk" ${globalCfg.compliance?'checked':''} onchange="lg('mon_global',{compliance:this.checked});ls('mon_global',{compliance:this.checked})"><span class="tog-t"><span class="tog-k"></span></span><span>在中国大陆使用，请进行严格的合规检查</span></label><div class="fh">勾选后将屏蔽被墙的境外新闻源，防止敏感内容出现在监控结果中</div></div>`;
+  h+=`<div class="fg"><label class="fl">深色模式</label><label class="tog"><input type="checkbox" ${document.documentElement.getAttribute('data-theme')==='dark'?'checked':''} onchange="toggleTheme();document.getElementById('sModal').querySelector('.mdl-b').innerHTML='';typeof renderSettingsBody!=='undefined'&&(document.getElementById('sModal').querySelector('.mdl-b').innerHTML=renderSettingsBody(currentSysId,sysData))"><span class="tog-t"><span class="tog-k"></span></span><span>${document.documentElement.getAttribute('data-theme')==='dark'?'开启':'关闭'}</span></label></div>`;
+  h+=`<div class="fg"><label class="fl">合规检查</label><label class="tog"><input type="checkbox" id="complianceChk" ${globalCfg.compliance?'checked':''} onchange="ls('mon_global',{compliance:this.checked})"><span class="tog-t"><span class="tog-k"></span></span><span>在中国大陆使用，请进行严格的合规检查</span></label><div class="fh">勾选后将屏蔽被墙的境外新闻源，防止敏感内容出现在监控结果中</div></div>`;
 
   // System-specific settings
   if(d){
@@ -502,9 +560,13 @@ function renderSettingsBody(curSysId, D){
   });
   h+=`</ul></div>`;
 
+  // README
+  h+=`<div class="abt" style="margin-top:var(--space-xl)"><h3>README</h3><div style="white-space:pre-wrap;font-size:var(--font-sm);color:var(--text-secondary);line-height:1.7">${esc(README)}</div></div>`;
+
   // About
   h+=`<div class="abt" style="margin-top:var(--space-xl)"><h3>关于</h3>
     <p>行业监控系统 是由 <strong>娱乐资本论</strong> 自主研发的全网内容实时巡检与自动化采集平台。</p>
+    <p style="margin-top:8px"><strong>版本：</strong>v${V}</p>
     <p style="margin-top:8px"><strong>知识产权：</strong>本系统全部知识产权归 <a href="https://ylzbl.com/" target="_blank">娱乐资本论</a> 所有。</p>
     <p style="margin-top:8px"><strong>部署方式：</strong>直接浏览器打开、GitHub Pages 或 Cloudflare Workers 均可使用。</p>
   </div>`;
@@ -522,4 +584,116 @@ function onAIProviderChange(){
 function saveAICfg(){
   const cfg={provider:document.getElementById('aiProvider').value,url:document.getElementById('aiUrl').value.trim(),model:document.getElementById('aiModel').value.trim(),key:document.getElementById('aiKey').value.trim(),summarizePrompt:document.getElementById('aiSumPrompt').value,dedupPrompt:document.getElementById('aiDedupPrompt').value};
   ls('mon_ai',cfg);toast('AI配置已保存','ok');
+}
+
+// === PDF REPORT GENERATION ===
+function generatePDFReport(sysId, d, type) {
+  const sys = SYS[sysId];
+  const today = new Date();
+  const dateStr = today.toLocaleDateString('zh-CN', {year:'numeric',month:'long',day:'numeric'});
+  const items = d.items.slice(0, 100);
+  const en = d.sources.filter(s=>s.enabled).length;
+  const imp = items.filter(i=>i.important).length;
+  const todayItems = items.filter(i => { const t = new Date(); t.setHours(0,0,0,0); return i.ts >= t.getTime(); });
+
+  // Build publication-style report HTML
+  let reportHTML = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+<title>${sys.name} - ${type==='daily'?'日报':'周报'}</title>
+<style>
+@page{size:A4;margin:20mm 15mm}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"Noto Sans SC","Microsoft YaHei",SimHei,sans-serif;color:#1a1a1a;line-height:1.8;font-size:13px}
+.cover{text-align:center;padding:80px 40px 40px;border-bottom:3px solid ${sys.accent}}
+.cover h1{font-size:28px;font-weight:900;color:${sys.accent};margin-bottom:12px}
+.cover .subtitle{font-size:16px;color:#666;margin-bottom:24px}
+.cover .meta{font-size:12px;color:#999}
+.cover .logo{font-size:14px;color:${sys.accent};font-weight:700;margin-top:20px}
+.section{margin:20px 0;page-break-inside:avoid}
+.section h2{font-size:16px;font-weight:900;color:${sys.accent};border-left:4px solid ${sys.accent};padding-left:10px;margin-bottom:12px}
+.section h3{font-size:14px;font-weight:700;color:#333;margin:12px 0 8px}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0}
+.stat-card{border:1px solid #e0e0e0;border-radius:8px;padding:12px;text-align:center}
+.stat-card .val{font-size:24px;font-weight:900;color:${sys.accent}}
+.stat-card .label{font-size:11px;color:#999;margin-top:4px}
+table{width:100%;border-collapse:collapse;font-size:12px;margin:10px 0}
+th{background:${sys.accent}15;color:${sys.accent};font-weight:700;padding:8px 10px;text-align:left;border-bottom:2px solid ${sys.accent}40}
+td{padding:6px 10px;border-bottom:1px solid #eee}
+tr:nth-child(even) td{background:#fafafa}
+.imp{color:#e53e3e;font-weight:700}
+.footer{text-align:center;font-size:10px;color:#999;margin-top:40px;padding-top:16px;border-top:1px solid #eee}
+.kw-tag{display:inline-block;padding:2px 8px;margin:2px;border-radius:4px;font-size:11px;background:${sys.accent}15;color:${sys.accent}}
+</style></head><body>`;
+
+  // Cover
+  reportHTML += `<div class="cover">
+    <h1>${sys.icon} ${sys.name}</h1>
+    <div class="subtitle">${type==='daily'?'每日监控日报':'每周监控周报'}</div>
+    <div class="meta">报告日期：${dateStr} | 生成时间：${today.toLocaleString('zh-CN')} | 第${Math.ceil(today.getDate()/7)}周</div>
+    <div class="logo">娱乐资本论 · 行业监控系统 v${V}</div>
+  </div>`;
+
+  // Stats
+  reportHTML += `<div class="section"><h2>概览统计</h2>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="val">${en}</div><div class="label">活跃信息源</div></div>
+      <div class="stat-card"><div class="val">${items.length}</div><div class="label">监控条目</div></div>
+      <div class="stat-card"><div class="val">${todayItems.length}</div><div class="label">今日新增</div></div>
+      <div class="stat-card"><div class="val">${imp}</div><div class="label">重要/告警</div></div>
+    </div>
+  </div>`;
+
+  // Keyword summary
+  const kwCounts = {};
+  d.keywords.slice(0, 15).forEach(kw => {
+    kwCounts[kw] = items.filter(i => kwMatch(i.title||'',[kw])).length;
+  });
+  const topKw = Object.entries(kwCounts).sort((a,b) => b[1]-a[1]).slice(0,12);
+  reportHTML += `<div class="section"><h2>关键字热度</h2><div>`;
+  topKw.forEach(([kw, count]) => {
+    reportHTML += `<span class="kw-tag">${esc(kw)} (${count})</span>`;
+  });
+  reportHTML += `</div></div>`;
+
+  // Items by category
+  const groups = {};
+  items.forEach(i => { const c = i.cat||'默认'; if(!groups[c]) groups[c]=[]; groups[c].push(i); });
+  for (const [cat, catItems] of Object.entries(groups)) {
+    reportHTML += `<div class="section"><h2>${esc(cat)} (${catItems.length}条)</h2><table>
+      <tr><th style="width:80px">时间</th><th style="width:60px">来源</th><th>标题</th><th style="width:40px">标记</th></tr>`;
+    catItems.slice(0, 30).forEach(i => {
+      reportHTML += `<tr><td>${fmtTime(i.ts)}</td><td>${esc(i.source)}</td><td>${esc(i.title)}</td><td>${i.important?'<span class="imp">!</span>':''}</td></tr>`;
+    });
+    reportHTML += `</table></div>`;
+  }
+
+  // Source stats
+  reportHTML += `<div class="section"><h2>信息源采集统计</h2><table>
+    <tr><th>信息源</th><th>类型</th><th>分类</th><th>采集量</th><th>状态</th></tr>`;
+  d.sources.forEach(s => {
+    const count = items.filter(i => i.source === s.name).length;
+    reportHTML += `<tr><td>${esc(s.name)}</td><td>${s.type.toUpperCase()}</td><td>${esc(s.category||'默认')}</td><td>${count}</td><td>${s.enabled?'启用':'停用'}</td></tr>`;
+  });
+  reportHTML += `</table></div>`;
+
+  // Footer
+  reportHTML += `<div class="footer">本报告由 娱乐资本论 行业监控系统 v${V} 自动生成 | ${dateStr}<br>知识产权归 娱乐资本论 所有 | https://ylzbl.com</div>`;
+
+  reportHTML += `</body></html>`;
+
+  // Open in new window for printing
+  const blob = new Blob([reportHTML], {type: 'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const w = window.open(url, '_blank');
+  if (w) {
+    w.onload = () => {
+      setTimeout(() => { w.print(); }, 500);
+    };
+  } else {
+    // Fallback: download the report HTML
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${sysId}_${type}_report_${today.toISOString().split('T')[0]}.html`;
+    a.click();
+  }
+  toast('报告已生成，请在弹出窗口中打印或保存为PDF', 'ok');
 }
