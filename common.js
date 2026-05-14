@@ -494,6 +494,30 @@ const README = `
 - **数据可视化**：仪表盘含饼图、柱状图、折线图、词云、世界地图
 - **浏览器通知**：重要告警实时推送桌面通知
 
+## 快速开始
+1. 在浏览器中打开 index.html
+2. 首页自动运行监控（或点击🔄按钮手动刷新）
+3. 点击板块卡片进入子系统详细页面
+4. 切换标签查看：仪表盘、信息源、时间线、关键字、报告
+
+## 信息源管理
+- 支持 RSS 订阅和页面轮询两种采集方式
+- 每个系统预设7-8个行业专属信息源
+- 可自定义添加/删除/启用/停用信息源
+- 支持JSON格式批量导入导出
+
+## AI功能
+- 预填智谱GLM测试Key，开箱即用
+- 支持5种AI服务商：智谱/DeepSeek/Gemini/OpenAI兼容/自定义
+- 可自定义摘要和去重Prompt
+- 单条AI摘要 + 报告AI总结
+
+## 报告生成
+- 日报/周报自动汇总
+- 出版物风格PDF报告（含封面、统计、表格）
+- TXT纯文本导出
+- CSV数据导出（Excel兼容，UTF-8 BOM）
+
 ## 部署方式
 1. 直接浏览器打开 index.html 即可使用
 2. 部署到 GitHub Pages
@@ -502,9 +526,68 @@ const README = `
 ## 数据存储
 所有数据存储在浏览器 localStorage 中，不传输到任何服务器。支持JSON导入导出设置、CSV导出监控数据。
 
+## 合规过滤
+默认开启中国大陆合规检查，屏蔽30+敏感境外域名。可在设置中关闭（不推荐）。
+
 ## 知识产权
 本系统全部知识产权归 [娱乐资本论](https://ylzbl.com/) 所有。
 `;
+
+// === README / CHANGELOG VIEWER ===
+function openDocViewer(docType) {
+  let content = '';
+  let title = '';
+  if (docType === 'readme') {
+    title = '📖 使用说明 README';
+    content = formatReadme(README);
+  } else {
+    title = '📋 变更日志 Changelog';
+    content = formatChangelog(CHANGELOG);
+  }
+  const overlay = document.createElement('div');
+  overlay.className = 'mdl-o on';
+  overlay.id = 'docViewer';
+  overlay.innerHTML = `<div class="mdl" style="max-width:800px"><div class="mdl-h"><span class="mdl-t">${title}</span><button class="mdl-x" onclick="document.getElementById('docViewer').remove()">&times;</button></div><div class="mdl-b" style="max-height:75vh">${content}</div></div>`;
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+  document.body.appendChild(overlay);
+}
+
+function formatReadme(text) {
+  let html = esc(text);
+  // Headers
+  html = html.replace(/^# (.+)$/gm, '<h2 style="font-size:20px;font-weight:900;color:var(--accent);margin:20px 0 10px;border-bottom:2px solid var(--accent);padding-bottom:6px">$1</h2>');
+  html = html.replace(/^## (.+)$/gm, '<h3 style="font-size:16px;font-weight:700;color:var(--accent);margin:16px 0 8px">$1</h3>');
+  html = html.replace(/^### (.+)$/gm, '<h4 style="font-size:14px;font-weight:700;color:var(--text);margin:12px 0 6px">$1</h4>');
+  // Bold
+  html = html.replace(/\*\*(.+?)\*\*/g, '<strong style="color:var(--accent)">$1</strong>');
+  // Links
+  html = html.replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" target="_blank" style="color:var(--accent)">$1</a>');
+  // List items
+  html = html.replace(/^- (.+)$/gm, '<div style="padding-left:16px;margin:4px 0;position:relative"><span style="position:absolute;left:0;color:var(--accent)">•</span>$1</div>');
+  // Numbered items
+  html = html.replace(/^(\d+)\. (.+)$/gm, '<div style="padding-left:20px;margin:4px 0"><span style="color:var(--accent);font-weight:700">$1.</span> $2</div>');
+  // Wrap in container
+  return `<div style="font-size:var(--font-sm);line-height:1.8;color:var(--text-secondary);white-space:pre-line">${html}</div>`;
+}
+
+function formatChangelog(changelog) {
+  let html = '';
+  changelog.forEach((cl, idx) => {
+    const isFirst = idx === 0;
+    html += `<div style="margin-bottom:20px;padding:16px;border-radius:var(--radius-sm);border:1px solid ${isFirst?'var(--accent)':'var(--border)'};${isFirst?'background:var(--accent-light)':''}">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span style="font-size:16px;font-weight:900;color:${isFirst?'var(--accent)':'var(--text)'}">v${cl.v}</span>
+        <span style="font-size:var(--font-xs);color:var(--text-muted)">${cl.date}</span>
+        ${isFirst?'<span style="font-size:var(--font-xs);background:var(--accent);color:#fff;padding:1px 8px;border-radius:10px;font-weight:700">当前版本</span>':''}
+      </div>
+      <ul style="padding-left:20px;list-style:disc">`;
+    cl.changes.forEach(c => {
+      html += `<li style="font-size:var(--font-sm);color:var(--text-secondary);margin:3px 0;line-height:1.6">${esc(c)}</li>`;
+    });
+    html += `</ul></div>`;
+  });
+  return html;
+}
 
 // === SETTINGS RENDER ===
 function renderSettingsBody(curSysId, D){
