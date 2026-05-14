@@ -1,0 +1,7 @@
+name = "yz-monitor"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+[routes]
+pattern = "yz-monitor.lishuhang.com/*"
+zone_name = "lishuhang.com"

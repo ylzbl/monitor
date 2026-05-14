@@ -2,7 +2,7 @@
    行业监控系统 v0.9 — 共享核心逻辑
    娱乐资本论
    ============================================================ */
-const V = '1.0';
+const V = '1.1';
 
 // === BLOCKED DOMAINS (compliance filter) ===
 const BLOCKED_DOMAINS = [
@@ -38,7 +38,8 @@ function getSelfProxyBase() {
   // 否则使用Cloudflare Worker专用域名
   return 'https://yz-monitor.lishuhang.workers.dev/api/proxy?url=';
 }
-const PROXIES = [getSelfProxyBase(), 'https://corsproxy.io/?', 'https://api.allorigins.win/raw?url='];
+// Only use self-hosted Worker proxy — public proxies (corsproxy.io, allorigins.win) are unreliable
+const PROXIES = [getSelfProxyBase()];
 const RSS2JSON = 'https://api.rss2json.com/v1/api.json?rss_url=';
 
 // === PAGE NOISE FILTER ===
@@ -58,7 +59,8 @@ const SYS = {
       {name:'TOP TOY资讯',url:'https://www.toptoyglobal.com/news/2.html',type:'page',category:'品牌动态'},
       {name:'娱乐资本论',url:'https://ylzbl.com',type:'page',category:'行业媒体'},
       {name:'36氪快讯',url:'https://36kr.com/newsflashes',type:'page',category:'综合资讯'},
-      {name:'界面-文娱',url:'https://www.jiemian.com/article_list/146.html',type:'page',category:'综合资讯'},
+      {name:'界面新闻-文娱',url:'https://www.jiemian.com/',type:'page',category:'综合资讯'},
+      {name:'微博-娱乐资本论',url:'/api/weibo/5666751910',type:'rss',category:'行业媒体'},
     ],
     defaultKeywords:['泡泡玛特','盲盒','潮玩','TOP TOY','52TOYS','寻找独角兽','Skullpanda','Molly','Dimoo','LABUBU','popmart','手办','扭蛋','潮品','文创产品','玩具行业','盲盒市场','潮玩市场','IP联名','潮流玩具','收藏玩具','二次元周边','模型玩具','高达','万代','好利来联名','名创优品','海贼王','火影','三丽鸥','迪士尼','奥特曼','蛋仔派对','谷子','二次元消费','ACG周边'],
     defaultAlertKeywords:['泡泡玛特','违规','召回','下架','监管','侵权','假货','质量问题','安全事故'],
@@ -77,6 +79,7 @@ const SYS = {
       {name:'国家电影局-公映许可公示',url:'https://www.chinafilm.gov.cn/xxgk/gsxx/dygyxkz/',type:'page',category:'许可证'},
       {name:'国家电影局首页',url:'https://www.chinafilm.gov.cn',type:'page',category:'政策法规'},
       {name:'娱乐资本论',url:'https://ylzbl.com',type:'page',category:'行业媒体'},
+      {name:'微博-广电时评',url:'/api/weibo/3244303712',type:'rss',category:'行业媒体'},
     ],
     defaultKeywords:['备案','审查','许可证','播出','违规','下架','限令','综艺','电视剧','网络剧','动画片','广播电视','电影局','放映许可证','龙标','备案公示','广电总局','网络视听','内容审核','电视剧备案','网络剧备案','影视剧审查','播出许可','广播电视法','网信办','文娱监管','影视监管','播出资质','微短剧备案','动画片审查','引进片','进口片','合拍片','内容安全'],
     defaultAlertKeywords:['下架','违规','处罚','限令','整改','禁播','约谈','封杀','行政处罚','吊销许可'],
@@ -95,6 +98,7 @@ const SYS = {
       {name:'灯塔专业版',url:'https://piaofang.taopiaopiao.com',type:'page',category:'票房数据'},
       {name:'骨朵剧集排行',url:'https://www.guduodata.com',type:'page',category:'数据平台'},
       {name:'娱乐资本论',url:'https://ylzbl.com',type:'page',category:'行业媒体'},
+      {name:'微博-中国电影报道',url:'/api/weibo/1726235753',type:'rss',category:'电影资讯'},
     ],
     defaultKeywords:['票房','排片','上座率','预售','破亿','口碑','豆瓣评分','档期','院线','观影人次','票房冠军','票房纪录','春节档','国庆档','暑期档','国产电影','引进片','票房收入','票房突破','电影市场','首日票房','总票房','单片票房','银幕数','场均人次','电影票房','密钥','延期','撤档','点映','猫眼','淘票票','灯塔','艺恩'],
     defaultAlertKeywords:['票房破亿','撤档','偷票房','口碑崩','票房惨败','退票','盗版','偷漏票房'],
@@ -114,6 +118,7 @@ const SYS = {
       {name:'重点网络影视剧备案',url:'https://dsbei.nrta.gov.cn',type:'page',category:'备案系统'},
       {name:'娱乐资本论',url:'https://ylzbl.com',type:'page',category:'行业媒体'},
       {name:'36氪快讯',url:'https://36kr.com/newsflashes',type:'page',category:'综合资讯'},
+      {name:'微博-新腕儿',url:'/api/weibo/7399094435',type:'rss',category:'行业研究'},
     ],
     defaultKeywords:['短剧','微短剧','小程序剧','竖屏剧','投流','短剧备案','快手短剧','抖音短剧','短剧出海','付费短剧','免费短剧','短剧平台','DataEye','短剧爆款','短剧投流','短剧充值','短剧制作','短剧发行','横屏短剧','竖屏短剧','长视频平台','短视频平台','短剧监管','微短剧备案','短剧市场','新腕儿','九州文化','短剧投流ROI','短剧制作成本','ReelShort','短剧女演员','短剧男演员','短剧编剧','短剧导演','点众科技','中文在线短剧'],
     defaultAlertKeywords:['下架','监管','备案','违规','处罚','禁播','约谈','整改','劣迹艺人'],
@@ -132,7 +137,8 @@ const SYS = {
       {name:'泡泡玛特IR',url:'https://www.popmart.com.cn/home/investor',type:'page',category:'公司公告'},
       {name:'娱乐资本论',url:'https://ylzbl.com',type:'page',category:'行业媒体'},
       {name:'36氪快讯',url:'https://36kr.com/newsflashes',type:'page',category:'综合资讯'},
-      {name:'界面-文娱',url:'https://www.jiemian.com/article_list/146.html',type:'page',category:'综合资讯'},
+      {name:'界面新闻',url:'https://www.jiemian.com/',type:'page',category:'综合资讯'},
+      {name:'微博-娱乐资本论',url:'/api/weibo/5666751910',type:'rss',category:'行业媒体'},
     ],
     defaultKeywords:['财报','营收','利润','股价','公告','增持','减持','定增','重组','立案','退市','业绩预告','年度报告','证监会','分红','股权质押','光线传媒','华谊兄弟','万达电影','博纳影业','欢瑞世纪','慈文传媒','华策影视','芒果超媒','中文在线','阅文集团','快手','哔哩哔哩','爱奇艺','传媒板块','影视股','娱乐股','文娱行业','传媒行业','影视公司','上市公司公告','股转','新三板','泡泡玛特','猫眼娱乐','IMAX中国','猫眼','阿里影业','腾讯音乐'],
     defaultAlertKeywords:['立案','退市','亏损','暴跌','证监会','处罚','违规','诉讼','冻结','强平','ST','退市风险','商誉减值','业绩变脸'],
@@ -213,6 +219,8 @@ function relevanceScore(title, keywords){
 function isBlocked(url){
   const cfg=lg('mon_global',{compliance:true});
   if(!cfg.compliance)return false;
+  // Internal API routes are never blocked
+  if(url.startsWith('/api/'))return false;
   try{
     const u=new URL(url);
     const host=u.hostname.toLowerCase();
@@ -223,20 +231,36 @@ function isBlocked(url){
 // === FETCH WITH PROXY ===
 async function fetchProxy(url){
   if(isBlocked(url))throw new Error('源被合规过滤屏蔽');
+  // Internal API routes (/api/weibo/) are served by the same Worker - fetch directly
+  if(url.startsWith('/api/')){
+    const base=typeof location!=='undefined'?location.origin:'https://yz-monitor.lishuhang.workers.dev';
+    const fullUrl=base+url;
+    try{
+      const ctrl=new AbortController();const tid=setTimeout(()=>ctrl.abort(),20000);
+      const resp=await fetch(fullUrl,{signal:ctrl.signal});
+      clearTimeout(tid);
+      if(!resp.ok)throw new Error('HTTP '+resp.status);
+      const buf=await resp.arrayBuffer();
+      return new TextDecoder('utf-8').decode(buf);
+    }catch(e){throw e}
+  }
   let lastErr=null;
   for(const proxy of PROXIES){
     try{
       const ctrl=new AbortController();const tid=setTimeout(()=>ctrl.abort(),15000);
-      // Cloudflare Worker代理使用 ?url= 参数格式，公共代理直接拼接URL
-      let fetchUrl;
-      if(proxy.includes('/api/proxy?url=')){
-        fetchUrl=proxy+encodeURIComponent(url)+'&_t='+Date.now();
-      }else{
-        fetchUrl=proxy+encodeURIComponent(url)+'&_t='+Date.now();
-      }
+      let fetchUrl=proxy+encodeURIComponent(url)+'&_t='+Date.now();
       const resp=await fetch(fetchUrl,{signal:ctrl.signal});
-      clearTimeout(tid);if(!resp.ok)throw new Error('HTTP '+resp.status);
-      const buf=await resp.arrayBuffer();return new TextDecoder('utf-8').decode(buf);
+      clearTimeout(tid);
+      // Worker proxy always returns 200; check X-Original-Status for real status
+      const origStatus=resp.headers.get('X-Original-Status');
+      const proxyErr=resp.headers.get('X-Proxy-Error');
+      if(proxyErr)throw new Error('Proxy error: '+proxyErr);
+      const buf=await resp.arrayBuffer();
+      const text=new TextDecoder('utf-8').decode(buf);
+      // Check if the content is valid (not empty and not an error page)
+      if(text.length<200&&origStatus&&origStatus!=='200')throw new Error('HTTP '+origStatus);
+      if(text.length<50)throw new Error('Empty response');
+      return text;
     }catch(e){lastErr=e}
   }
   throw lastErr||new Error('All proxies failed');
@@ -465,6 +489,14 @@ function initSysData(id){
 
 // === CHANGELOG (reverse order) ===
 const CHANGELOG = [
+  {v:'1.1',date:'2026-05-14',changes:[
+    'Worker内置微博RSS采集（/api/weibo/{uid}端点）',
+    '各板块新增微博信息源（娱乐资本论、广电时评、中国电影报道、新腕儿等）',
+    'Worker代理始终返回200，通过X-Original-Status传递真实状态码',
+    '移除失效的公共CORS代理（corsproxy.io、allorigins.win）',
+    '修复界面新闻URL（jiemian.com/article_list/146.html→404，改为首页）',
+    '移除合规检查设置中的AI添加描述文本',
+  ]},
   {v:'1.0',date:'2026-05-14',changes:[
     '部署到Cloudflare Workers，自建CORS代理解决跨域问题',
     '修复CORS跨域报错（corsproxy.io/allorigins.win不可用问题）',
@@ -511,11 +543,12 @@ const README = `
 
 ## 功能特性
 - **5大行业监控板块**：每个板块配备行业专属信息源、关键字、告警规则
-- **自动采集**：支持RSS订阅和网页轮询两种采集方式，页面打开即自动运行
+- **自动采集**：支持RSS订阅、网页轮询和微博动态三种采集方式
+- **微博RSS**：Worker内置微博Visitor Auth，实时抓取指定微博账号动态
 - **AI智能摘要**：支持智谱GLM、DeepSeek、Gemini等AI服务商，可自定义Prompt
-- **合规过滤**：默认开启中国大陆合规检查，屏蔽敏感境外新闻源
+- **合规过滤**：默认开启合规检查，屏蔽敏感境外新闻源
 - **出版物风格报告**：生成含封面、表格、图表的专业监控报告
-- **数据可视化**：仪表盘含饼图、柱状图、折线图、词云、世界地图
+- **数据可视化**：仪表盘含饼图、柱状图、折线图、词云
 - **浏览器通知**：重要告警实时推送桌面通知
 
 ## 快速开始
@@ -527,14 +560,14 @@ const README = `
 ## 部署方式
 1. 直接浏览器打开 index.html 即可使用
 2. 部署到 GitHub Pages (ylzbl.github.io/monitor)
-3. 部署到 Cloudflare Workers — 推荐部署方式，自带CORS代理
+3. 部署到 Cloudflare Workers — 推荐部署方式，自带CORS代理和微博RSS
    - workers.dev: https://yz-monitor.lishuhang.workers.dev
-   - 自定义域名: https://yz-monitor.lishuhang.com（需配置DNS）
+   - 自定义域名: https://yz-monitor.lishuhang.com
 
 ## CORS代理说明
 本系统通过Cloudflare Worker自建CORS代理解决浏览器跨域限制。
 部署在 workers.dev 或 lishuhang.com 时，自动使用 /api/proxy 作为代理。
-本地打开或GitHub Pages部署时，自动回退到公共CORS代理。
+微博动态通过 /api/weibo/{uid} 端点获取，无需第三方RSSHub。
 
 ## 知识产权
 本系统全部知识产权归 [娱乐资本论](https://ylzbl.com/) 所有。
@@ -618,7 +651,7 @@ function renderSettingsBody(curSysId, D){
   // Global settings
   h+=`<div class="abt" style="margin-top:var(--space-xl)"><h3>全局设置</h3></div>`;
   h+=`<div class="fg"><label class="fl">深色模式</label><label class="tog"><input type="checkbox" ${document.documentElement.getAttribute('data-theme')==='dark'?'checked':''} onchange="toggleTheme();document.getElementById('sModal').querySelector('.mdl-b').innerHTML='';typeof renderSettingsBody!=='undefined'&&(document.getElementById('sModal').querySelector('.mdl-b').innerHTML=renderSettingsBody(currentSysId,sysData))"><span class="tog-t"><span class="tog-k"></span></span><span>${document.documentElement.getAttribute('data-theme')==='dark'?'开启':'关闭'}</span></label></div>`;
-  h+=`<div class="fg"><label class="fl">合规检查</label><label class="tog"><input type="checkbox" id="complianceChk" ${globalCfg.compliance?'checked':''} onchange="ls('mon_global',{compliance:this.checked})"><span class="tog-t"><span class="tog-k"></span></span><span>在中国大陆使用，请进行严格的合规检查</span></label></div>`;
+  h+=`<div class="fg"><label class="fl">合规检查</label><label class="tog"><input type="checkbox" id="complianceChk" ${globalCfg.compliance?'checked':''} onchange="ls('mon_global',{compliance:this.checked})"><span class="tog-t"><span class="tog-k"></span></span><span>${globalCfg.compliance?'开启':'关闭'}</span></label></div>`;
 
   // System-specific settings
   if(d){
