@@ -34,9 +34,9 @@ const AI_PROVIDERS = {
 function getSelfProxyBase() {
   // 如果部署在Cloudflare Workers上，使用自身域名作为代理
   const loc = typeof location !== 'undefined' ? location.origin : '';
-  if (loc && loc.includes('lishuhang.com')) return loc + '/api/proxy?url=';
+  if (loc && (loc.includes('lishuhang.com') || loc.includes('workers.dev'))) return loc + '/api/proxy?url=';
   // 否则使用Cloudflare Worker专用域名
-  return 'https://yz-monitor.lishuhang.com/api/proxy?url=';
+  return 'https://yz-monitor.lishuhang.workers.dev/api/proxy?url=';
 }
 const PROXIES = [getSelfProxyBase(), 'https://corsproxy.io/?', 'https://api.allorigins.win/raw?url='];
 const RSS2JSON = 'https://api.rss2json.com/v1/api.json?rss_url=';
@@ -527,11 +527,13 @@ const README = `
 ## 部署方式
 1. 直接浏览器打开 index.html 即可使用
 2. 部署到 GitHub Pages (ylzbl.github.io/monitor)
-3. 部署到 Cloudflare Workers (yz-monitor.lishuhang.com) — 推荐部署方式，自带CORS代理
+3. 部署到 Cloudflare Workers — 推荐部署方式，自带CORS代理
+   - workers.dev: https://yz-monitor.lishuhang.workers.dev
+   - 自定义域名: https://yz-monitor.lishuhang.com（需配置DNS）
 
 ## CORS代理说明
 本系统通过Cloudflare Worker自建CORS代理解决浏览器跨域限制。
-部署在 yz-monitor.lishuhang.com 时，自动使用 /api/proxy 作为代理。
+部署在 workers.dev 或 lishuhang.com 时，自动使用 /api/proxy 作为代理。
 本地打开或GitHub Pages部署时，自动回退到公共CORS代理。
 
 ## 知识产权
