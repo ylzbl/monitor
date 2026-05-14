@@ -43,13 +43,12 @@ const SYS = {
     desc:'实时掌握潮玩行业舆情动态、产品热度、价格波动、竞品动作',
     accent:'#E91E8C',
     defaultSources:[
-      {name:'泡泡玛特IR公告',url:'https://www.popmart.com/news',type:'page',category:'品牌'},
-      {name:'52TOYS官方',url:'https://www.52toys.com/news',type:'page',category:'品牌'},
       {name:'虎嗅-消费',url:'https://rss.huxiu.com/',type:'rss',category:'行业'},
-      {name:'36氪-快讯',url:'https://36kr.com/newsflashes',type:'page',category:'快讯'},
-      {name:'IT之家-数码',url:'https://www.ithome.com/rss/',type:'rss',category:'科技'},
+      {name:'36氪-消费',url:'https://36kr.com/newsflashes',type:'page',category:'快讯'},
+      {name:'IT之家',url:'https://www.ithome.com/rss/',type:'rss',category:'科技'},
+      {name:'澎湃新闻',url:'https://feedx.net/rss/thepaper.xml',type:'rss',category:'综合'},
     ],
-    defaultKeywords:['泡泡玛特','盲盒','潮玩','TOP TOY','52TOYS','寻找独角兽','Skullpanda','Molly','Dimoo','新品','联名','限量','涨价','名创优品','IP授权','手办','二次元','LABUBU','popmart'],
+    defaultKeywords:['泡泡玛特','盲盒','潮玩','TOP TOY','52TOYS','寻找独角兽','Skullpanda','Molly','Dimoo','新品','联名','限量','涨价','名创优品','IP授权','手办','二次元','LABUBU','popmart','玩具','手作','模型','国潮','收藏','二次元经济','文化消费','新消费','零售','国货','文创','IP','动漫','游戏','娱乐','周边','扭蛋'],
     defaultAlertKeywords:['泡泡玛特','违规','召回','下架','监管','侵权','假货'],
     defaultAIPrompt:'你是{sys}的数据分析师，专注于潮玩行业。请根据监控数据生成{type}摘要：1.潮玩行业重大事件与新品动态；2.品牌风险与合规警示；3.行业趋势判断。简明扼要，中文。'
   },
@@ -59,12 +58,12 @@ const SYS = {
     accent:'#1565C0',
     defaultSources:[
       {name:'广电总局-通知公告',url:'http://www.nrta.gov.cn/art/chengwenxingwj/gztg.shtml',type:'page',category:'政务'},
-      {name:'国家电影局',url:'http://www.chinafilm.gov.cn/chinafilm/',type:'page',category:'电影局'},
       {name:'重点网络影视剧备案',url:'http://211.146.10.138:8080/YSJBA/',type:'page',category:'备案'},
       {name:'虎嗅',url:'https://rss.huxiu.com/',type:'rss',category:'行业'},
-      {name:'澎湃新闻-政务',url:'https://feedx.net/rss/thepaper.xml',type:'rss',category:'综合'},
+      {name:'澎湃新闻',url:'https://feedx.net/rss/thepaper.xml',type:'rss',category:'综合'},
+      {name:'36氪',url:'https://36kr.com/newsflashes',type:'page',category:'快讯'},
     ],
-    defaultKeywords:['备案','审查','许可证','播出','违规','下架','限令','综艺','电视剧','网络剧','动画片','广播电视','电影局','放映许可证','龙标','备案公示'],
+    defaultKeywords:['备案','审查','许可证','播出','违规','下架','限令','综艺','电视剧','网络剧','动画片','广播电视','电影局','放映许可证','龙标','备案公示','广电','总署','文化','影视','节目','发行','上映','审查通过','审批','监管','文化部','宣传部','文娱','视频','短剧','网剧','备案公示','内容审核','内容监管','网络视听'],
     defaultAlertKeywords:['下架','违规','处罚','限令','整改','禁播','约谈'],
     defaultAIPrompt:'你是{sys}的数据分析师，专注于广电政策与合规。请根据监控数据生成{type}摘要：1.政策法规变化；2.违规下架风险；3.备案审查动态。简明扼要，中文。'
   },
@@ -75,10 +74,11 @@ const SYS = {
     defaultSources:[
       {name:'1905电影网',url:'https://www.1905.com/rss',type:'rss',category:'电影'},
       {name:'猫眼专业版',url:'https://piaofang.maoyan.com/dashboard',type:'page',category:'票房数据'},
-      {name:'虎嗅-文娱',url:'https://rss.huxiu.com/',type:'rss',category:'行业'},
+      {name:'虎嗅',url:'https://rss.huxiu.com/',type:'rss',category:'行业'},
       {name:'澎湃新闻',url:'https://feedx.net/rss/thepaper.xml',type:'rss',category:'综合'},
+      {name:'36氪',url:'https://36kr.com/newsflashes',type:'page',category:'快讯'},
     ],
-    defaultKeywords:['票房','排片','上座率','首日','预售','破亿','口碑','豆瓣','档期','院线','观影人次','票房冠军','票房纪录','春节档','国庆档','暑期档','国产片','引进片'],
+    defaultKeywords:['票房','排片','上座率','首日','预售','破亿','口碑','豆瓣','档期','院线','观影人次','票房冠军','票房纪录','春节档','国庆档','暑期档','国产片','引进片','电影','影片','上映','导演','主演','影院','影城','银幕','动画','票房收入','票房突破','电影市场','院线','发行'],
     defaultAlertKeywords:['票房破亿','撤档','偷票房','口碑崩','票房惨败'],
     defaultAIPrompt:'你是{sys}的数据分析师，专注于电影市场。请根据监控数据生成{type}摘要：1.票房排行榜及趋势；2.重点影片口碑与排片；3.档期市场动态。简明扼要，中文。'
   },
@@ -89,10 +89,10 @@ const SYS = {
     defaultSources:[
       {name:'虎嗅',url:'https://rss.huxiu.com/',type:'rss',category:'行业'},
       {name:'澎湃新闻',url:'https://feedx.net/rss/thepaper.xml',type:'rss',category:'综合'},
-      {name:'36氪-快讯',url:'https://36kr.com/newsflashes',type:'page',category:'快讯'},
+      {name:'36氪',url:'https://36kr.com/newsflashes',type:'page',category:'快讯'},
       {name:'IT之家',url:'https://www.ithome.com/rss/',type:'rss',category:'科技'},
     ],
-    defaultKeywords:['短剧','微短剧','小程序剧','竖屏剧','充值','爆款','投流','ROI','短剧备案','快手短剧','抖音短剧','短剧出海','付费短剧','免费短剧','短剧平台','DataEye'],
+    defaultKeywords:['短剧','微短剧','小程序剧','竖屏剧','充值','爆款','投流','ROI','短剧备案','快手短剧','抖音短剧','短剧出海','付费短剧','免费短剧','短剧平台','DataEye','横屏','竖屏','小程序','短剧','长视频','短视频','影视','网文','IP改编','短内容','流量','内容','剧集','电视剧','网剧','视频','流量变现','内容创作'],
     defaultAlertKeywords:['下架','监管','备案','违规','处罚','禁播','约谈'],
     defaultAIPrompt:'你是{sys}的数据分析师，专注于短剧产业。请根据监控数据生成{type}摘要：1.短剧爆款趋势；2.监管与合规风险；3.平台与投流动态。简明扼要，中文。'
   },
@@ -103,10 +103,11 @@ const SYS = {
     defaultSources:[
       {name:'巨潮资讯网',url:'http://www.cninfo.com.cn/new/disclosure/stock?stockId=&orgId=&tabname=fulltext',type:'page',category:'公告'},
       {name:'虎嗅',url:'https://rss.huxiu.com/',type:'rss',category:'行业'},
-      {name:'澎湃新闻-财经',url:'https://feedx.net/rss/thepaper.xml',type:'rss',category:'综合'},
+      {name:'澎湃新闻',url:'https://feedx.net/rss/thepaper.xml',type:'rss',category:'综合'},
       {name:'IT之家',url:'https://www.ithome.com/rss/',type:'rss',category:'科技'},
+      {name:'36氪',url:'https://36kr.com/newsflashes',type:'page',category:'快讯'},
     ],
-    defaultKeywords:['财报','营收','利润','股价','公告','增持','减持','定增','重组','立案','退市','业绩预告','年度报告','证监会','IPO','分红','股权','质押','光线传媒','华谊兄弟','万达电影'],
+    defaultKeywords:['财报','营收','利润','股价','公告','增持','减持','定增','重组','立案','退市','业绩预告','年度报告','证监会','IPO','分红','股权','质押','光线传媒','华谊兄弟','万达电影','上市','A股','港股','纳斯达克','传媒','娱乐','文娱','影视','游戏','公司','资本','融资','投资','市值','交易','收购','并购','新三板','北交所','科创板','创业板'],
     defaultAlertKeywords:['立案','退市','亏损','暴跌','证监会','处罚','违规','诉讼','冻结','强平'],
     defaultAIPrompt:'你是{sys}的数据分析师，专注于传媒上市公司。请根据监控数据生成{type}摘要：1.重要财报与业绩动态；2.股价异动与风险事件；3.监管处罚与合规风险。简明扼要，中文。'
   }
