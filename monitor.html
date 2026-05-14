@@ -248,15 +248,14 @@ async function refreshData() {
   const existIds = new Set(d.items.map(i => i.url + '|' + i.title));
   let unique = deduped.filter(i => !existIds.has(i.url + '|' + i.title));
   // Relevance filter
-  const allKw = [...d.keywords, ...d.alertKw].map(k => k.toLowerCase());
+  const allKw = [...d.keywords, ...d.alertKw];
   const relevanceFiltered = unique.filter(item => {
     if (item.type === 'page') return true;
-    const txt = (item.title || '').toLowerCase();
-    return allKw.some(kw => txt.includes(kw));
+    return kwMatch(item.title || '', allKw);
   });
   unique = relevanceFiltered;
   // Keyword match
-  unique.forEach(item => { const txt = (item.title||'').toLowerCase(); allKw.forEach(kw => { if (txt.includes(kw)) item.important = true; }); });
+  unique.forEach(item => { if (kwMatch(item.title||'', allKw)) item.important = true; });
   d.items = [...unique, ...d.items].slice(0, d.cfg.maxItems);
   ls(sk(curSys,'items'), d.items);
   // Notify
@@ -299,7 +298,7 @@ function rDash() {
   }
   // Word cloud
   const kwCounts = {};
-  d.keywords.forEach(kw => { kwCounts[kw] = d.items.filter(i => (i.title||'').toLowerCase().includes(kw.toLowerCase())).length; });
+  d.keywords.forEach(kw => { kwCounts[kw] = d.items.filter(i => kwMatch(i.title||'',[kw])).length; });
   const sortedKw = Object.entries(kwCounts).sort((a,b) => b[1]-a[1]).slice(0,20);
   renderWordCloud(document.getElementById('dsWordCloud'), sortedKw.map(e=>e[0]), sortedKw.map(e=>e[1]));
 }

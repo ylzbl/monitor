@@ -113,17 +113,15 @@ async function refreshAll() {
           } catch(e) { fail++; }
         }
         // Relevance filter for generic RSS
-        const allKw = [...d.keywords, ...d.alertKw].map(k => k.toLowerCase());
+        const allKw = [...d.keywords, ...d.alertKw];
         const filtered = items.filter(item => {
           if (item.type === 'page') return true;
-          const txt = (item.title || '').toLowerCase();
-          return allKw.some(kw => txt.includes(kw));
+          return kwMatch(item.title || '', allKw);
         });
         items = filtered;
         // Keyword match
         items.forEach(item => {
-          const txt = (item.title || '').toLowerCase();
-          allKw.forEach(kw => { if (txt.includes(kw)) item.important = true; });
+          if (kwMatch(item.title || '', allKw)) item.important = true;
         });
         // Dedup
         const existIds = new Set(d.items.map(i => i.url + '|' + i.title));

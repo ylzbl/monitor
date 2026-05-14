@@ -48,7 +48,7 @@ const SYS = {
       {name:'IT之家',url:'https://www.ithome.com/rss/',type:'rss',category:'科技'},
       {name:'澎湃新闻',url:'https://feedx.net/rss/thepaper.xml',type:'rss',category:'综合'},
     ],
-    defaultKeywords:['泡泡玛特','盲盒','潮玩','TOP TOY','52TOYS','寻找独角兽','Skullpanda','Molly','Dimoo','新品','联名','限量','涨价','名创优品','IP授权','手办','二次元','LABUBU','popmart','玩具','手作','模型','国潮','收藏','二次元经济','文化消费','新消费','零售','国货','文创','IP','动漫','游戏','娱乐','周边','扭蛋'],
+    defaultKeywords:['泡泡玛特','盲盒','潮玩','TOP TOY','52TOYS','寻找独角兽','Skullpanda','Molly','Dimoo','LABUBU','popmart','手办','扭蛋','潮品','文创产品','玩具行业','盲盒市场','潮玩市场','IP联名','潮流玩具','收藏玩具','二次元周边','模型玩具'],
     defaultAlertKeywords:['泡泡玛特','违规','召回','下架','监管','侵权','假货'],
     defaultAIPrompt:'你是{sys}的数据分析师，专注于潮玩行业。请根据监控数据生成{type}摘要：1.潮玩行业重大事件与新品动态；2.品牌风险与合规警示；3.行业趋势判断。简明扼要，中文。'
   },
@@ -63,7 +63,7 @@ const SYS = {
       {name:'澎湃新闻',url:'https://feedx.net/rss/thepaper.xml',type:'rss',category:'综合'},
       {name:'36氪',url:'https://36kr.com/newsflashes',type:'page',category:'快讯'},
     ],
-    defaultKeywords:['备案','审查','许可证','播出','违规','下架','限令','综艺','电视剧','网络剧','动画片','广播电视','电影局','放映许可证','龙标','备案公示','广电','总署','文化','影视','节目','发行','上映','审查通过','审批','监管','文化部','宣传部','文娱','视频','短剧','网剧','备案公示','内容审核','内容监管','网络视听'],
+    defaultKeywords:['备案','审查','许可证','播出','违规','下架','限令','综艺','电视剧','网络剧','动画片','广播电视','电影局','放映许可证','龙标','备案公示','广电总局','网络视听','内容审核','电视剧备案','网络剧备案','影视剧审查','播出许可','广播电视法','网信办','文娱监管','影视监管','播出资质'],
     defaultAlertKeywords:['下架','违规','处罚','限令','整改','禁播','约谈'],
     defaultAIPrompt:'你是{sys}的数据分析师，专注于广电政策与合规。请根据监控数据生成{type}摘要：1.政策法规变化；2.违规下架风险；3.备案审查动态。简明扼要，中文。'
   },
@@ -78,7 +78,7 @@ const SYS = {
       {name:'澎湃新闻',url:'https://feedx.net/rss/thepaper.xml',type:'rss',category:'综合'},
       {name:'36氪',url:'https://36kr.com/newsflashes',type:'page',category:'快讯'},
     ],
-    defaultKeywords:['票房','排片','上座率','首日','预售','破亿','口碑','豆瓣','档期','院线','观影人次','票房冠军','票房纪录','春节档','国庆档','暑期档','国产片','引进片','电影','影片','上映','导演','主演','影院','影城','银幕','动画','票房收入','票房突破','电影市场','院线','发行'],
+    defaultKeywords:['票房','排片','上座率','预售','破亿','口碑','豆瓣评分','档期','院线','观影人次','票房冠军','票房纪录','春节档','国庆档','暑期档','国产电影','引进片','票房收入','票房突破','电影市场','首日票房','总票房','单片票房','银幕数','场均人次','电影票房'],
     defaultAlertKeywords:['票房破亿','撤档','偷票房','口碑崩','票房惨败'],
     defaultAIPrompt:'你是{sys}的数据分析师，专注于电影市场。请根据监控数据生成{type}摘要：1.票房排行榜及趋势；2.重点影片口碑与排片；3.档期市场动态。简明扼要，中文。'
   },
@@ -92,7 +92,7 @@ const SYS = {
       {name:'36氪',url:'https://36kr.com/newsflashes',type:'page',category:'快讯'},
       {name:'IT之家',url:'https://www.ithome.com/rss/',type:'rss',category:'科技'},
     ],
-    defaultKeywords:['短剧','微短剧','小程序剧','竖屏剧','充值','爆款','投流','ROI','短剧备案','快手短剧','抖音短剧','短剧出海','付费短剧','免费短剧','短剧平台','DataEye','横屏','竖屏','小程序','短剧','长视频','短视频','影视','网文','IP改编','短内容','流量','内容','剧集','电视剧','网剧','视频','流量变现','内容创作'],
+    defaultKeywords:['短剧','微短剧','小程序剧','竖屏剧','投流','短剧备案','快手短剧','抖音短剧','短剧出海','付费短剧','免费短剧','短剧平台','DataEye','短剧爆款','短剧投流','短剧充值','短剧制作','短剧发行','横屏短剧','竖屏短剧','长视频平台','短视频平台','短剧监管','微短剧备案','短剧市场'],
     defaultAlertKeywords:['下架','监管','备案','违规','处罚','禁播','约谈'],
     defaultAIPrompt:'你是{sys}的数据分析师，专注于短剧产业。请根据监控数据生成{type}摘要：1.短剧爆款趋势；2.监管与合规风险；3.平台与投流动态。简明扼要，中文。'
   },
@@ -107,7 +107,7 @@ const SYS = {
       {name:'IT之家',url:'https://www.ithome.com/rss/',type:'rss',category:'科技'},
       {name:'36氪',url:'https://36kr.com/newsflashes',type:'page',category:'快讯'},
     ],
-    defaultKeywords:['财报','营收','利润','股价','公告','增持','减持','定增','重组','立案','退市','业绩预告','年度报告','证监会','IPO','分红','股权','质押','光线传媒','华谊兄弟','万达电影','上市','A股','港股','纳斯达克','传媒','娱乐','文娱','影视','游戏','公司','资本','融资','投资','市值','交易','收购','并购','新三板','北交所','科创板','创业板'],
+    defaultKeywords:['财报','营收','利润','股价','公告','增持','减持','定增','重组','立案','退市','业绩预告','年度报告','证监会','分红','股权质押','光线传媒','华谊兄弟','万达电影','博纳影业','欢瑞世纪','慈文传媒','华策影视','芒果超媒','中文在线','阅文集团','快手','哔哩哔哩','爱奇艺','传媒板块','影视股','娱乐股','文娱行业','传媒行业','影视公司','上市公司公告','股转','新三板'],
     defaultAlertKeywords:['立案','退市','亏损','暴跌','证监会','处罚','违规','诉讼','冻结','强平'],
     defaultAIPrompt:'你是{sys}的数据分析师，专注于传媒上市公司。请根据监控数据生成{type}摘要：1.重要财报与业绩动态；2.股价异动与风险事件；3.监管处罚与合规风险。简明扼要，中文。'
   }
@@ -154,6 +154,19 @@ function hlKw(text,kws){
   let r=text;
   allKw.forEach(kw=>{const re=new RegExp(kw.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi');r=r.replace(re,m=>`<span class="kw-h">${m}</span>`)});
   return r;
+}
+
+// === KEYWORD MATCH (strict: avoids substring false positives) ===
+function kwMatch(text, keywords){
+  const txt = text.toLowerCase();
+  return keywords.some(kw => {
+    const kwLow = kw.toLowerCase();
+    // For keywords >= 4 chars, use includes (safe enough)
+    if (kwLow.length >= 4) return txt.includes(kwLow);
+    // For short keywords (1-3 chars), require word boundary
+    try { return new RegExp('\\b' + kwLow.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + '\\b').test(txt); }
+    catch { return txt.includes(kwLow); }
+  });
 }
 
 // === COMPLIANCE CHECK ===
